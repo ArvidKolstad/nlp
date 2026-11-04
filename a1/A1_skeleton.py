@@ -1,6 +1,8 @@
 import pickle
+from itertools import islice
 
 import torch
+from datasets import load_dataset
 from torch.utils.data import DataLoader
 from transformers import BatchEncoding, PretrainedConfig, PreTrainedModel
 from transformers.modeling_outputs import CausalLMOutputWithPast
@@ -94,6 +96,7 @@ def build_tokenizer(
             )
 
     while len(vocabular) < max_length_voc:
+        print(len(vocabular))
         # Find most used token combination
         counter: dict[bytes, int] = {}
         for line in encoding:
@@ -122,7 +125,9 @@ def build_tokenizer(
                         word[idx + 1] = most_common_pair
                         word.pop(idx)
                         merge_count += 1
-    return A1Tokenizer(model_max_length, vocabular)
+
+    voc_map = {token: idx for idx, token in enumerate(vocabular)}
+    return A1Tokenizer(model_max_length, voc_map)
 
 
 class A1Tokenizer:
@@ -131,7 +136,7 @@ class A1Tokenizer:
     def __init__(
         self,
         model_max_length: int | None,
-        tokens: list[bytes],
+        tokens: dict[bytes, int],
         pad_token: bytes = b"<PAD>",
         unk_token: bytes = b"<UNK>",
         bos_token: bytes = b"<BOS>",
@@ -143,6 +148,7 @@ class A1Tokenizer:
         self.eos_token = eos_token
         self.model_max_length = model_max_length  # Needed for truncation.
         self.vocabular = tokens
+        self.inv_vocab = {v: k for k, v in tokens.items()}
         self.n_single_tokens = 260
 
     def __call__(
@@ -192,33 +198,37 @@ class A1Tokenizer:
                     continue
                 token_list[no_text] += [bytes([b]) for b in data]
 
-            for token in self.vocabular[self.n_single_tokens :]:
-                text_length = len(token_list)
-                counter = 0
-                for idx in range(text_length - 1):
-                    if (text_length - 1) - counter <= idx:
-                        break
+            for token in islice(self.vocabular.keys(), self.n_single_tokens, None):
+                tokens = token_list[no_text]
+                new_token_list: list[bytes] = []
+                n = len(tokens)
+                idx = 0
+                while idx < n:
+                    if idx < n - 1 and tokens[idx] + tokens[idx + 1] == token:
+                        new_token_list.append(token)
+                        idx += 2
+                    else:
+                        new_token_list.append(tokens[idx])
+                        idx += 1
 
-                    if token == token_list[idx] + token_list[idx + 1]:
-                        token_list[no_text][idx + 1] = token
-                        token_list[no_text].pop(idx)
-                        counter += 1
+                token_list[no_text] = new_token_list
+
             token_list[no_text] = (
                 [self.bos_token] + token_list[no_text] + [self.eos_token]
             )
-            id_list[no_text] = [
-                self.vocabular.index(token) for token in token_list[no_text]
-            ]
+            id_list[no_text] = [self.vocabular[token] for token in token_list[no_text]]
 
         if truncation:
             assert self.model_max_length, "model_max must be an integer"
-            for text_vector in id_list:
+            for no_text, text_vector in enumerate(id_list):
                 if len(text_vector) > self.model_max_length:
-                    text_vector = text_vector[: self.model_max_length]
+                    id_list[no_text] = text_vector[: self.model_max_length - 1] + [
+                        self.vocabular[self.eos_token]
+                    ]
 
         if padding:
             max_length = max(len(x) for x in id_list)
-            padding_idx = self.vocabular.index(self.pad_token)
+            padding_idx = self.vocabular[self.pad_token]
             attention_mask = [[] for _ in id_list]
             for no_text, text_vector in enumerate(id_list):
                 total_padding = max_length - len(text_vector)
@@ -227,15 +237,16 @@ class A1Tokenizer:
                     0 for _ in padding_vector
                 ]
 
-                text_vector += padding_vector
+                id_list[no_text] += padding_vector
         else:
             attention_mask = [[1 for _ in text_vector] for text_vector in id_list]
 
         if return_tensors:
             try:
                 id_list = torch.tensor(id_list)
+                attention_mask = torch.tensor(attention_mask)
             except ValueError:
-                print(
+                raise ValueError(
                     "Text generates different length vectors, concider turning on padding"
                 )
 
@@ -247,18 +258,13 @@ class A1Tokenizer:
 
     def decode(self, ids: list[int]) -> str:
         """Return a string decoded from given input ids"""
-        byte_encoding: bytes = b""
-        for i in ids:
-            token = self.vocabular[i]
-            assert isinstance(token, bytes), "token must be a byte"
-            byte_encoding += token
-
+        byte_encoding = b"".join([self.inv_vocab[id] for id in ids])
         return byte_encoding.decode("utf-8")
 
     def save(self, filename):
         """Save the tokenizer to the given file."""
         with open(filename, "wb") as f:
-            pickle.dump(self.vocabular, f)
+            pickle.dump(self, f)
 
     @staticmethod
     def from_file(filename):
@@ -279,9 +285,9 @@ class A1RNNModelConfig(PretrainedConfig):
         self, vocab_size=None, embedding_size=None, hidden_size=None, **kwargs
     ):
         super().__init__(**kwargs)
-        self.vocab_size = vocab_size
-        self.hidden_size = hidden_size
-        self.embedding_size = embedding_size
+        self.vocab_size: int | None = vocab_size
+        self.hidden_size: int | None = hidden_size
+        self.embedding_size: int | None = embedding_size
 
 
 class A1RNNModel(PreTrainedModel):
@@ -411,11 +417,37 @@ class A1Trainer:
 
 
 def main():
-    tokenizer = build_tokenizer("train.txt")
-    with open("./val.txt", encoding="utf-8") as f:
-        val_texts = [line for line in f]
+    TRAIN_FILE = "./train.txt"
+    VAL_FILE = "./val.txt"
+    batch_size = 32
 
-    tokenizer(val_texts, padding=True, return_tensors="pt")
+    # Train Tokenizer
+    """
+    tokenizer = build_tokenizer("train.txt", max_number_of_merges=10)
+    tokenizer.save("./new_tokenizer_model.pickle")
+    """
+    tokenizer = A1Tokenizer.from_file("./tokenizer_model")
+    print(tokenizer.vocabular)
+
+    dataset = load_dataset("text", data_files={"train": TRAIN_FILE, "test": VAL_FILE})
+    # reduce data
+    dataset = dataset["test"].train_test_split(test_size=0.01, train_size=0.01)
+
+    dataset = dataset.filter(lambda x: x["text"].strip() != "")
+    dataset = dataset.map(
+        lambda batch: dict(
+            tokenizer(
+                batch["text"], truncation=False, padding=True, return_tensors="pt"
+            ),
+        ),
+        batched=True,
+        remove_columns=["text"],
+    )
+
+    dl_train = DataLoader(
+        dataset["train"],
+    )
+    dl_val = DataLoader(dataset["test"], batch_size=batch_size)
 
 
 if __name__ == "__main__":
