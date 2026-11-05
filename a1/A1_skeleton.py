@@ -1,6 +1,7 @@
 import pickle
 from itertools import islice
 
+import numpy as np
 import torch
 from datasets import load_dataset
 from torch.utils.data import DataLoader
@@ -282,12 +283,18 @@ class A1RNNModelConfig(PretrainedConfig):
     """Configuration object that stores hyperparameters that define the RNN-based language model."""
 
     def __init__(
-        self, vocab_size=None, embedding_size=None, hidden_size=None, **kwargs
+        self,
+        vocab_size=None,
+        embedding_size=None,
+        hidden_size=None,
+        pad_id=None,
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.vocab_size: int | None = vocab_size
         self.hidden_size: int | None = hidden_size
         self.embedding_size: int | None = embedding_size
+        self.pad_id: int | None = pad_id
 
 
 class A1RNNModel(PreTrainedModel):
@@ -297,12 +304,12 @@ class A1RNNModel(PreTrainedModel):
 
     def __init__(self, config):
         super().__init__(config)
-        self.embedding = ...
-        self.rnn = ...
-        self.unembedding = ...
+        self.embedding = torch.nn.Embedding(self.vocab_size, self.embedding_size)
+        self.rnn = torch.nn.LSTM(self.embedding_size, self.hidden_size, num_layers=4)
+        self.unembedding = torch.nn.Linear(self.hidden_size, self.vocab_size)
         self.post_init()  # for compatibility
 
-    def forward(self, labels):
+    def forward(self, labels: torch.Tensor, pad_id):
         """The forward pass of the RNN-based language model.
 
         Args:
@@ -311,19 +318,21 @@ class A1RNNModel(PreTrainedModel):
           CausalLMOutputWithPast object that stores loss and logits (the output tensor (3D) for all token positions for all vocabulary items.)
         """
 
-        loss_func = torch.nn.CrossEntropyLoss(ignore_index=-100)
+        loss_func = torch.nn.CrossEntropyLoss(ignore_index=pad_id)
 
-        X = ...  # all columns in input_ids except the last one
-        Y = ...  # all columns in input_ids except the first one
+        X = labels[:, :-1]
+        Y = labels[:, 1:]
 
         assert X.shape == Y.shape
 
-        embedded = ...
-        rnn_out, _ = ...
-        out = ...
+        embed = self.embedding(X)
+        rnn_out, _ = self.rnn(embed)
+        out = self.unembedding(rnn_out)
+        loss_func(out, Y)
 
         #  compute the loss for the model output and Y
-        return CausalLMOutputWithPast(...)
+        loss = loss_func(out, Y)
+        return CausalLMOutputWithPast(loss=loss, logits=out)
 
 
 ###
@@ -347,17 +356,47 @@ class A1RNNModel(PreTrainedModel):
 # - output_dir:       The directory where the trained model will be saved.
 
 
+class TrainingArguments:
+    def __init__(
+        self,
+        optim: str = "adamw_torch",
+        eval_strategy: str = "epoch",
+        use_cpu: bool = False,
+        learning_rate: float = 1e-3,
+        num_train_epochs: int = 100,
+        per_device_train_batch_size: int = 32,
+        per_device_eval_batch_size: int = 64,
+        output_dir: str = "./models/new_model",
+        collator=None,
+    ):
+        self.optim = "adamw_torch"
+        self.eval_strategy = "epoch"
+        self.use_cpu = False
+        self.learning_rate = 0.01
+        self.num_train_epochs = 500
+        self.per_device_train_batch_size = 32
+        self.per_device_eval_batch_size = 64
+        self.output_dir = output_dir
+        self.collator = collator
+
+
 class A1Trainer:
     """A minimal implementation similar to a Trainer from the HuggingFace library."""
 
-    def __init__(self, model, args, train_dataset, eval_dataset, processing_class):
+    def __init__(
+        self,
+        model: torch.nn.Module,
+        args: TrainingArguments,
+        train_dataset: dict,
+        eval_dataset: dict,
+        processing_class: A1Tokenizer,
+    ):
         """Set up the trainer.
 
         Args:
           model:          The model to train.
           args:           The training parameters stored in a TrainingArguments object.
           train_dataset:  The dataset containing the training documents.
-          eval_dataset:   The dataset containing the validation documents.
           eval_dataset:   The dataset containing the validation documents.
           processing_class:      The tokenizer.
         """
@@ -387,14 +426,16 @@ class A1Trainer:
         device = self.select_device()
         print("Device:", device)
         self.model.to(device)
+        pad_id = self.processing_class.vocabular[self.processing_class.pad_token]
 
         # TODO: Relevant arguments: at least args.learning_rate, but you can optionally also consider
         # other Adam-related hyperparameters here.
-        optimizer = torch.optim.AdamW(...)
+
+        optimizer = torch.optim.AdamW(
+            self.model.parameters(), lr=self.args.learning_rate
+        )
 
         # TODO: Relevant arguments: args.per_device_train_batch_size, args.per_device_eval_batch_size
-        train_loader = DataLoader(...)
-        val_loader = DataLoader(...)
 
         # TODO: Your work here is to implement the training loop.
         #
@@ -411,43 +452,89 @@ class A1Trainer:
         #       optimizer.zero_grad()
         #       loss.backward() # loss is stored as an attribute of model's output
         #       optimizer.step()
+        if self.args.collator:
+            train_loader = DataLoader(
+                self.train_dataset["input_ids"],
+                batch_size=self.args.per_device_train_batch_size,
+                collate_fn=self.args.collator,
+            )
+            val_loader = DataLoader(
+                self.eval_dataset["input_ids"],
+                batch_size=self.args.per_device_eval_batch_size,
+                collate_fn=self.args.collator,
+            )
+        else:
+            train_loader = DataLoader(
+                self.train_dataset["input_ids"],
+                batch_size=self.args.per_device_train_batch_size,
+                collate_fn=self.args.collator,
+            )
+            val_loader = DataLoader(
+                self.eval_dataset["input_ids"],
+                batch_size=self.args.per_device_eval_batch_size,
+                collate_fn=self.args.collator,
+            )
+        for epoch in range(self.args.num_train_epochs):
+            print(epoch)
+            self.model.train()
+            total_train_loss = 0.0
+            for batch in train_loader:
+                optimizer.zero_grad()
+                model_outputs = self.model(batch, pad_id)
+                total_train_loss += model_outputs.loss.item()
+                model_outputs.loss.backward()
+                optimizer.step()
+
+            avg_train = total_train_loss / len(train_loader)
+            print(f"Mean train loss: {avg_train}, Perplexity {np.exp(avg_train)}")
+
+            total_val_loss = 0.0
+            self.model.eval()
+            for batch in val_loader:
+                total_val_loss += self.model(batch, pad_id).loss.item()
+            avg_val = total_val_loss / len(val_loader)
+            print(f"Mean val loss: {avg_val}, Perplexity {np.exp(avg_val)}")
 
         print(f"Saving to {args.output_dir}.")
         self.model.save_pretrained(args.output_dir)
 
 
+class TextCollator:
+    def __init__(self, tokenizer, truncation=False):
+        self.tokenizer = tokenizer
+        self.truncation = truncation
+
+    def __call__(self, samples):
+        texts = [s["text"] for s in samples]
+        return self.tokenizer(
+            texts, truncation=self.truncation, padding=True, return_tensors="pt"
+        )
+
+
 def main():
     TRAIN_FILE = "./train.txt"
     VAL_FILE = "./val.txt"
-    batch_size = 32
+    batch_size_train = 32
+    batch_size_val = 64
 
     # Train Tokenizer
     """
     tokenizer = build_tokenizer("train.txt", max_number_of_merges=10)
-    tokenizer.save("./new_tokenizer_model.pickle")
+    tokenizer.save("./new_tokenizer_model.pkl")
     """
-    tokenizer = A1Tokenizer.from_file("./tokenizer_model")
-    print(tokenizer.vocabular)
+    tokenizer = A1Tokenizer.from_file("./tokenizer_model.pkl")
 
     dataset = load_dataset("text", data_files={"train": TRAIN_FILE, "test": VAL_FILE})
     # reduce data
-    dataset = dataset["test"].train_test_split(test_size=0.01, train_size=0.01)
-
-    dataset = dataset.filter(lambda x: x["text"].strip() != "")
+    # dataset = dataset["test"].train_test_split(test_size=0.5, train_size=0.5)
+    dataset = dataset.filter(lambda x: x["text"].strip() != "").with_format("torch")
     dataset = dataset.map(
-        lambda batch: dict(
-            tokenizer(
-                batch["text"], truncation=False, padding=True, return_tensors="pt"
-            ),
-        ),
+        lambda batch: dict(tokenizer(batch["text"], truncation=False, padding=False)),
         batched=True,
         remove_columns=["text"],
     )
 
-    dl_train = DataLoader(
-        dataset["train"],
-    )
-    dl_val = DataLoader(dataset["test"], batch_size=batch_size)
+    collator = TextCollator(tokenizer)
 
 
 if __name__ == "__main__":
