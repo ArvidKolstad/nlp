@@ -422,13 +422,12 @@ def main():
     batch_size = 32
 
     # Train Tokenizer
-    """
-    tokenizer = build_tokenizer("train.txt", max_number_of_merges=10)
-    tokenizer.save("./new_tokenizer_model.pickle")
-    """
-    tokenizer = A1Tokenizer.from_file("./tokenizer_model")
-    print(tokenizer.vocabular)
+    tokenizer = build_tokenizer("train.txt", max_number_of_merges=10000)
+    tokenizer.save("./new_tokenizer_model.pkl")
 
+    tokenizer = A1Tokenizer.from_file("./tokenizer_model.pkl")
+    print(tokenizer.vocabular)
+    """
     dataset = load_dataset("text", data_files={"train": TRAIN_FILE, "test": VAL_FILE})
     # reduce data
     dataset = dataset["test"].train_test_split(test_size=0.01, train_size=0.01)
@@ -448,7 +447,7 @@ def main():
         dataset["train"],
     )
     dl_val = DataLoader(dataset["test"], batch_size=batch_size)
-
+    """
 
 if __name__ == "__main__":
     main()
