@@ -524,6 +524,7 @@ def main():
     """
     tokenizer = A1Tokenizer.from_file("./tokenizer_model.pkl")
 
+    print(tokenizer.vocabular)
     dataset = load_dataset("text", data_files={"train": TRAIN_FILE, "test": VAL_FILE})
     # reduce data
     # dataset = dataset["test"].train_test_split(test_size=0.5, train_size=0.5)
