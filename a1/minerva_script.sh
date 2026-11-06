@@ -7,6 +7,7 @@
 #SBATCH --output=/data/users/arvidko/resutls/nlpA1/.
 #SBATCH --gres=gpu:L4:1
 
-source /data/users/arvidko/.venv/bin/activate
-python3 /data/users/arvidko/projects/nlp/a1/A1_skeleton.py
+cd ~/project/nlp/a1
+source ~/.venv/bin/activate
+python3 A1_skeleton.py
 
