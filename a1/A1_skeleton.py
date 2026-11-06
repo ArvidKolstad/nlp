@@ -233,7 +233,7 @@ class A1Tokenizer:
             attention_mask = [[] for _ in id_list]
             for no_text, text_vector in enumerate(id_list):
                 total_padding = max_length - len(text_vector)
-                padding_vector = [padding_idx for i in range(total_padding)]
+                padding_vector = [padding_idx for _ in range(total_padding)]
                 attention_mask[no_text] = [1 for _ in text_vector] + [
                     0 for _ in padding_vector
                 ]
@@ -305,12 +305,13 @@ class A1RNNModel(PreTrainedModel):
     def __init__(self, config):
         super().__init__(config)
         self.embedding = torch.nn.Embedding(config.vocab_size, config.embedding_size)
-        if self.tied_weights:
+
+        if config.tied_weights:
             self.rnn = torch.nn.LSTM(
                 config.embedding_size, config.embedding_size, num_layers=2
             )
             self.unembedding = torch.nn.Linear(config.embedding_size, config.vocab_size)
-            config.unembedding.weight = config.embedding.weight
+            self.unembedding.weight = self.embedding.weight
         else:
             assert config.hidden_size, "hidden size can't be None"
             self.rnn = torch.nn.LSTM(
@@ -327,7 +328,6 @@ class A1RNNModel(PreTrainedModel):
         Returns:
           CausalLMOutputWithPast object that stores loss and logits (the output tensor (3D) for all token positions for all vocabulary items.)
         """
-
         loss_func = torch.nn.CrossEntropyLoss(ignore_index=pad_id)
 
         X = labels[:, :-1]
@@ -338,10 +338,9 @@ class A1RNNModel(PreTrainedModel):
         embed = self.embedding(X)
         rnn_out, _ = self.rnn(embed)
         out = self.unembedding(rnn_out)
-        loss_func(out, Y)
 
         #  compute the loss for the model output and Y
-        loss = loss_func(out, Y)
+        loss = loss_func(out.reshape(-1, out.size(-1)), Y.reshape(-1))
         return CausalLMOutputWithPast(loss=loss, logits=out)
 
 
@@ -494,6 +493,7 @@ class A1Trainer:
             self.model.train()
             total_train_loss = 0.0
             for batch in train_loader:
+                batch = batch.to(device)
                 optimizer.zero_grad()
                 model_outputs = self.model(batch, pad_id)
                 total_train_loss += model_outputs.loss.item()
@@ -510,6 +510,7 @@ class A1Trainer:
             total_val_loss = 0.0
             self.model.eval()
             for batch in val_loader:
+                batch = batch.to(device)
                 total_val_loss += self.model(batch, pad_id).loss.item()
             avg_val_loss = total_val_loss / len(val_loader)
             avg_val_p = np.exp(avg_val_loss)
@@ -538,15 +539,17 @@ class A1Trainer:
 
 
 class TextCollator:
-    def __init__(self, tokenizer, truncation=False):
-        self.tokenizer = tokenizer
-        self.truncation = truncation
+    def __init__(self, tokenizer):
+        self.token_id: int = tokenizer.vocabular[tokenizer.pad_token]
 
     def __call__(self, samples):
-        texts = [s["text"] for s in samples]
-        return self.tokenizer(
-            texts, truncation=self.truncation, padding=True, return_tensors="pt"
-        )
+        max_length = max(len(x) for x in samples)
+        padded = []
+        for sample in samples:
+            total_padding = max_length - len(sample)
+            padding = torch.full((total_padding,), self.token_id, dtype=torch.long)
+            padded.append(torch.cat((sample, padding)))
+        return torch.stack(padded)
 
 
 def main():
@@ -575,7 +578,7 @@ def main():
     """
     tokenizer = A1Tokenizer.from_file("./big_tokenizer.pkl")
     collator = TextCollator(tokenizer)
-    with open("./encoded_data.pkl", "rb") as f:
+    with open("./tokenized_text.pkl", "rb") as f:
         encoded_data = pickle.load(f)
 
     model_config = A1RNNModelConfig(
