@@ -3,6 +3,7 @@ from itertools import islice
 
 import numpy as np
 import torch
+from matplotlib import pyplot as plt
 from torch.utils.data import DataLoader
 from transformers import BatchEncoding, PretrainedConfig, PreTrainedModel
 from transformers.modeling_outputs import CausalLMOutputWithPast
@@ -381,8 +382,8 @@ class TrainingArguments:
         self.optim = "adamw_torch"
         self.eval_strategy = "epoch"
         self.use_cpu = False
-        self.learning_rate = 0.01
-        self.num_train_epochs = 500
+        self.learning_rate = 0.001
+        self.num_train_epochs = 30
         self.per_device_train_batch_size = 32
         self.per_device_eval_batch_size = 64
         self.output_dir = output_dir
@@ -439,7 +440,12 @@ class A1Trainer:
 
         # TODO: Relevant arguments: at least args.learning_rate, but you can optionally also consider
         # other Adam-related hyperparameters here.
+        best_loss = 1e8
+        train_loss: list[float] = []
+        train_perplex: list[float] = []
 
+        val_loss: list[float] = []
+        val_perplex: list[float] = []
         optimizer = torch.optim.AdamW(
             self.model.parameters(), lr=self.args.learning_rate
         )
@@ -494,18 +500,41 @@ class A1Trainer:
                 model_outputs.loss.backward()
                 optimizer.step()
 
-            avg_train = total_train_loss / len(train_loader)
-            print(f"Mean train loss: {avg_train}, Perplexity {np.exp(avg_train)}")
+            avg_train_loss = total_train_loss / len(train_loader)
+            avg_train_p = np.exp(avg_train_loss)
+            print(f"Mean train loss: {avg_train_loss}, Perplexity {avg_train_p}")
+
+            train_loss.append(avg_train_loss)
+            train_perplex.append(avg_train_p)
 
             total_val_loss = 0.0
             self.model.eval()
             for batch in val_loader:
                 total_val_loss += self.model(batch, pad_id).loss.item()
-            avg_val = total_val_loss / len(val_loader)
-            print(f"Mean val loss: {avg_val}, Perplexity {np.exp(avg_val)}")
+            avg_val_loss = total_val_loss / len(val_loader)
+            avg_val_p = np.exp(avg_val_loss)
+            print(f"Mean val loss: {avg_val_loss}, Perplexity {avg_val_p}")
+            val_loss.append(avg_val_loss)
+            val_perplex.append(avg_val_p)
 
-        print(f"Saving to {args.output_dir}.")
-        self.model.save_pretrained(args.output_dir)
+            if avg_val_loss < best_loss:
+                self.model.save_pretrained(args.output_dir)
+                print(f"Saving to {args.output_dir} with val loss {avg_val_loss}.")
+
+        fig, axes = plt.subplots(2, 1, size=(2, 1))
+
+        axes[0].plot(train_loss, color="blue", label="Trainig")
+        axes[0].plot(val_loss, color="red", label="Validation")
+
+        axes[1].plot(train_perplex, color="blue", label="Training")
+        axes[1].plot(val_perplex, color="red", label="Validation")
+
+        axes[0].set_suptitle("Loss")
+        axes[1].set_suptitle("Perplexity")
+
+        axes[0].legend()
+        axes[1].legend()
+        fig.savefig("./latest_trainig.pdf")
 
 
 class TextCollator:
@@ -559,7 +588,7 @@ def main():
         eval_strategy="epoch",
         use_cpu=False,
         learning_rate=1e-3,
-        num_train_epochs=100,
+        num_train_epochs=30,
         per_device_train_batch_size=32,
         per_device_eval_batch_size=64,
         output_dir="./new_model.pkl",
