@@ -296,12 +296,14 @@ class A1RNNModelConfig(PretrainedConfig):
         self.embedding_size: int = embedding_size
         self.tied_weights: bool = tied_weights
         self.hidden_size: int | None = hidden_size
+        kwargs["tie_word_embeddings"] =tied_weights 
 
 
 class A1RNNModel(PreTrainedModel):
     """The neural network model that implements a RNN-based language model."""
 
     config_class = A1RNNModelConfig
+    _tied_weights_keys = {"unembedding.weight": "embedding.weight"}
 
     def __init__(self, config):
         super().__init__(config)
@@ -312,14 +314,28 @@ class A1RNNModel(PreTrainedModel):
                 config.embedding_size, config.embedding_size, num_layers=2
             )
             self.unembedding = torch.nn.Linear(config.embedding_size, config.vocab_size)
-            self.unembedding.weight = self.embedding.weight
+           
         else:
             assert config.hidden_size, "hidden size can't be None"
             self.rnn = torch.nn.LSTM(
                 config.embedding_size, config.hidden_size, num_layers=2
             )
             self.unembedding = torch.nn.Linear(config.hidden_size, config.vocab_size)
+        
         self.post_init()  # for compatibility
+
+    def get_input_embeddings(self):
+        return self.embedding
+
+    def set_input_embeddings(self, value):
+        self.embedding = value
+
+    def get_output_embeddings(self):
+        return self.unembedding
+
+    def set_output_embeddings(self, value):
+        self.unembedding = value
+
 
     def forward(self, labels: torch.Tensor, pad_id):
         """The forward pass of the RNN-based language model.
