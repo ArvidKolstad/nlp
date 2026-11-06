@@ -3,6 +3,7 @@ from itertools import islice
 
 import numpy as np
 import torch
+from datasets import load_from_disk
 from matplotlib import pyplot as plt
 from torch.utils.data import DataLoader
 from transformers import BatchEncoding, PretrainedConfig, PreTrainedModel
@@ -578,8 +579,7 @@ def main():
     """
     tokenizer = A1Tokenizer.from_file("./big_tokenizer.pkl")
     collator = TextCollator(tokenizer)
-    with open("./tokenized_text.pkl", "rb") as f:
-        encoded_data = pickle.load(f)
+    encoded_data = load_from_disk("tokenized_text")
 
     model_config = A1RNNModelConfig(
         vocab_size=10260, embedding_size=256, tied_weights=True
