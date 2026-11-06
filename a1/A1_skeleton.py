@@ -3,7 +3,6 @@ from itertools import islice
 
 import numpy as np
 import torch
-from datasets import load_dataset
 from torch.utils.data import DataLoader
 from transformers import BatchEncoding, PretrainedConfig, PreTrainedModel
 from transformers.modeling_outputs import CausalLMOutputWithPast
@@ -284,17 +283,17 @@ class A1RNNModelConfig(PretrainedConfig):
 
     def __init__(
         self,
-        vocab_size=None,
-        embedding_size=None,
-        hidden_size=None,
-        pad_id=None,
+        vocab_size: int,
+        embedding_size: int,
+        tied_weights: bool,
+        hidden_size: int | None = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
-        self.vocab_size: int | None = vocab_size
+        self.vocab_size: int = vocab_size
+        self.embedding_size: int = embedding_size
+        self.tied_weights: bool = tied_weights
         self.hidden_size: int | None = hidden_size
-        self.embedding_size: int | None = embedding_size
-        self.pad_id: int | None = pad_id
 
 
 class A1RNNModel(PreTrainedModel):
@@ -304,9 +303,19 @@ class A1RNNModel(PreTrainedModel):
 
     def __init__(self, config):
         super().__init__(config)
-        self.embedding = torch.nn.Embedding(self.vocab_size, self.embedding_size)
-        self.rnn = torch.nn.LSTM(self.embedding_size, self.hidden_size, num_layers=4)
-        self.unembedding = torch.nn.Linear(self.hidden_size, self.vocab_size)
+        self.embedding = torch.nn.Embedding(config.vocab_size, config.embedding_size)
+        if self.tied_weights:
+            self.rnn = torch.nn.LSTM(
+                config.embedding_size, config.embedding_size, num_layers=2
+            )
+            self.unembedding = torch.nn.Linear(config.embedding_size, config.vocab_size)
+            config.unembedding.weight = config.embedding.weight
+        else:
+            assert config.hidden_size, "hidden size can't be None"
+            self.rnn = torch.nn.LSTM(
+                config.embedding_size, config.hidden_size, num_layers=2
+            )
+            self.unembedding = torch.nn.Linear(config.hidden_size, config.vocab_size)
         self.post_init()  # for compatibility
 
     def forward(self, labels: torch.Tensor, pad_id):
@@ -514,17 +523,14 @@ class TextCollator:
 def main():
     TRAIN_FILE = "./train.txt"
     VAL_FILE = "./val.txt"
-    batch_size_train = 32
-    batch_size_val = 64
 
     # Train Tokenizer
     """
     tokenizer = build_tokenizer("train.txt", max_number_of_merges=10)
     tokenizer.save("./new_tokenizer_model.pkl")
     """
-    tokenizer = A1Tokenizer.from_file("./tokenizer_model.pkl")
-
-    print(tokenizer.vocabular)
+    # Encode dataset
+    """
     dataset = load_dataset("text", data_files={"train": TRAIN_FILE, "test": VAL_FILE})
     # reduce data
     # dataset = dataset["test"].train_test_split(test_size=0.5, train_size=0.5)
@@ -535,7 +541,38 @@ def main():
         remove_columns=["text"],
     )
 
+    with open("./tokenized_text.pkl", "wb") as f:
+        pickle.dump(dataset, f)
+    """
+    tokenizer = A1Tokenizer.from_file("./big_tokenizer.pkl")
     collator = TextCollator(tokenizer)
+    with open("./encoded_data.pkl", "rb") as f:
+        encoded_data = pickle.load(f)
+
+    model_config = A1RNNModelConfig(
+        vocab_size=10260, embedding_size=256, tied_weights=True
+    )
+
+    model = A1RNNModel(model_config)
+    train_config = TrainingArguments(
+        optim="adamw_torch",
+        eval_strategy="epoch",
+        use_cpu=False,
+        learning_rate=1e-3,
+        num_train_epochs=100,
+        per_device_train_batch_size=32,
+        per_device_eval_batch_size=64,
+        output_dir="./new_model.pkl",
+        collator=collator,
+    )
+    trainer = A1Trainer(
+        model,
+        train_config,
+        encoded_data["train"],
+        encoded_data["test"],
+        tokenizer,
+    )
+    trainer.train()
 
 
 if __name__ == "__main__":
