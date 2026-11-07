@@ -296,7 +296,7 @@ class A1RNNModelConfig(PretrainedConfig):
         self.embedding_size: int = embedding_size
         self.tied_weights: bool = tied_weights
         self.hidden_size: int | None = hidden_size
-        kwargs["tie_word_embeddings"] =tied_weights 
+        kwargs["tie_word_embeddings"] = tied_weights
 
 
 class A1RNNModel(PreTrainedModel):
@@ -314,14 +314,14 @@ class A1RNNModel(PreTrainedModel):
                 config.embedding_size, config.embedding_size, num_layers=2
             )
             self.unembedding = torch.nn.Linear(config.embedding_size, config.vocab_size)
-           
+
         else:
             assert config.hidden_size, "hidden size can't be None"
             self.rnn = torch.nn.LSTM(
                 config.embedding_size, config.hidden_size, num_layers=2
             )
             self.unembedding = torch.nn.Linear(config.hidden_size, config.vocab_size)
-        
+
         self.post_init()  # for compatibility
 
     def get_input_embeddings(self):
@@ -335,7 +335,6 @@ class A1RNNModel(PreTrainedModel):
 
     def set_output_embeddings(self, value):
         self.unembedding = value
-
 
     def forward(self, labels: torch.Tensor, pad_id):
         """The forward pass of the RNN-based language model.
@@ -395,13 +394,13 @@ class TrainingArguments:
         output_dir: str = "./models/new_model",
         collator=None,
     ):
-        self.optim = "adamw_torch"
-        self.eval_strategy = "epoch"
-        self.use_cpu = False
-        self.learning_rate = 0.001
-        self.num_train_epochs = 30
-        self.per_device_train_batch_size = 32
-        self.per_device_eval_batch_size = 64
+        self.optim = optim
+        self.eval_strategy = eval_strategy
+        self.use_cpu = use_cpu
+        self.learning_rate = learning_rate
+        self.num_train_epochs = num_train_epochs
+        self.per_device_train_batch_size = per_device_train_batch_size
+        self.per_device_eval_batch_size = per_device_eval_batch_size
         self.output_dir = output_dir
         self.collator = collator
 
@@ -486,26 +485,26 @@ class A1Trainer:
         if self.args.collator:
             train_loader = DataLoader(
                 self.train_dataset["input_ids"],
-                batch_size=self.args.per_device_train_batch_size,
-                collate_fn=self.args.collator,
+                batch_size=args.per_device_train_batch_size,
+                collate_fn=args.collator,
             )
             val_loader = DataLoader(
                 self.eval_dataset["input_ids"],
-                batch_size=self.args.per_device_eval_batch_size,
-                collate_fn=self.args.collator,
+                batch_size=args.per_device_eval_batch_size,
+                collate_fn=args.collator,
             )
         else:
             train_loader = DataLoader(
                 self.train_dataset["input_ids"],
-                batch_size=self.args.per_device_train_batch_size,
-                collate_fn=self.args.collator,
+                batch_size=args.per_device_train_batch_size,
+                collate_fn=args.collator,
             )
             val_loader = DataLoader(
                 self.eval_dataset["input_ids"],
-                batch_size=self.args.per_device_eval_batch_size,
-                collate_fn=self.args.collator,
+                batch_size=args.per_device_eval_batch_size,
+                collate_fn=args.collator,
             )
-        for epoch in range(self.args.num_train_epochs):
+        for epoch in range(args.num_train_epochs):
             print(epoch)
             self.model.train()
             total_train_loss = 0.0
@@ -536,6 +535,7 @@ class A1Trainer:
             val_perplex.append(avg_val_p)
 
             if avg_val_loss < best_loss:
+                best_loss = avg_val_loss
                 self.model.save_pretrained(args.output_dir)
                 print(f"Saving to {args.output_dir} with val loss {avg_val_loss}.")
 
