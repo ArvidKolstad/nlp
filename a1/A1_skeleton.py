@@ -539,20 +539,24 @@ class A1Trainer:
                 self.model.save_pretrained(args.output_dir)
                 print(f"Saving to {args.output_dir} with val loss {avg_val_loss}.")
 
-        fig, axes = plt.subplots(2, 1, size=(2, 1))
+        fig, axes = plt.subplots(2, 1, figsize=(6, 6), sharex=True)
 
-        axes[0].plot(train_loss, color="blue", label="Trainig")
+        axes[0].plot(train_loss, color="blue", label="Training")
         axes[0].plot(val_loss, color="red", label="Validation")
+        axes[0].set_title("Loss")
+        axes[0].set_ylabel("Loss")
+        axes[0].legend()
 
         axes[1].plot(train_perplex, color="blue", label="Training")
         axes[1].plot(val_perplex, color="red", label="Validation")
-
-        axes[0].set_suptitle("Loss")
-        axes[1].set_suptitle("Perplexity")
-
-        axes[0].legend()
+        axes[1].set_title("Perplexity")
+        axes[1].set_ylabel("Perplexity")
+        axes[1].set_xlabel("Epoch")
         axes[1].legend()
-        fig.savefig("./latest_trainig.pdf")
+
+        fig.tight_layout()
+        fig.savefig("./latest_training.pdf")
+        plt.close(fig)
 
 
 class TextCollator:
