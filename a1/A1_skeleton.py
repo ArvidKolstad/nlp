@@ -611,7 +611,7 @@ def main():
         eval_strategy="epoch",
         use_cpu=False,
         learning_rate=5e-4,
-        num_train_epochs=40,
+        num_train_epochs=100,
         per_device_train_batch_size=32,
         per_device_eval_batch_size=64,
         output_dir="./new_model.pkl",

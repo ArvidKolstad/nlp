@@ -3,7 +3,7 @@
 #SBATCH -J nlpA1-training
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
-#SBATCH -t 3:00:00
+#SBATCH -t 5:00:00
 #SBATCH --output=/data/users/arvidko/results/nlpA1/%x-%j.out
 #SBATCH --gres=gpu:L4:1
 
