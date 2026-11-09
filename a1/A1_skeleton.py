@@ -311,7 +311,7 @@ class A1RNNModel(PreTrainedModel):
 
         if config.tied_weights:
             self.rnn = torch.nn.LSTM(
-                config.embedding_size, config.embedding_size, num_layers=2
+                config.embedding_size, config.embedding_size, num_layers=1
             )
             self.unembedding = torch.nn.Linear(config.embedding_size, config.vocab_size)
 
@@ -602,7 +602,7 @@ def main():
     encoded_data = load_from_disk("tokenized_text")
 
     model_config = A1RNNModelConfig(
-        vocab_size=10260, embedding_size=256, tied_weights=True
+        vocab_size=10260, embedding_size=128, tied_weights=True
     )
 
     model = A1RNNModel(model_config)
@@ -610,8 +610,8 @@ def main():
         optim="adamw_torch",
         eval_strategy="epoch",
         use_cpu=False,
-        learning_rate=5e-4,
-        num_train_epochs=100,
+        learning_rate=1e-3,
+        num_train_epochs=30,
         per_device_train_batch_size=32,
         per_device_eval_batch_size=64,
         output_dir="./new_model.pkl",
