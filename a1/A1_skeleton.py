@@ -629,6 +629,7 @@ def main():
             tokenizer,
         )
         trainer.train()
+
     sentences = [
         "She live in San",
         "I would love to",
@@ -637,9 +638,13 @@ def main():
         "Do you need to",
     ]
     model.eval()
-    data = tokenizer(sentences, truncation=False, padding=False)
+    data = tokenizer(sentences, truncation=False, padding=True, return_tensors="pt")
+    input = data["input_ids"]
     model.eval()
-    model(data, 256)
+    output = model(input, 256)
+    most_probable = np.argmax(output.logits.detach().numpy(), axis=2)
+    for i in most_probable:
+        print(tokenizer.decode(i))
 
 
 if __name__ == "__main__":
