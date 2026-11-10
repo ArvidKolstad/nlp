@@ -1,151 +1,149 @@
 Device: cuda
 0
-Mean train loss: 6.826994531252158, Perplexity 922.4143547747337
-Mean val loss: 6.535101350716182, Perplexity 688.9036016592385
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  9.87it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  9.83it/s]
-Saving to ./new_model.pkl with val loss 6.535101350716182.
+Mean train loss: 6.555602241472849, Perplexity 703.1725019733007
+Mean val loss: 6.256893410001482, Perplexity 521.596035536389
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 23.93it/s]
+Saving to ./new_model.pkl with val loss 6.256893410001482.
 1
-Mean train loss: 6.058616160244087, Perplexity 427.7830438823175
-Mean val loss: 6.156461913245065, Perplexity 471.75600494227245
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 13.67it/s]
-Saving to ./new_model.pkl with val loss 6.156461913245065.
+Mean train loss: 5.822897839409383, Perplexity 337.9499607515099
+Mean val loss: 5.94058974470411, Perplexity 380.1590602341929
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 29.15it/s]
+Saving to ./new_model.pkl with val loss 5.94058974470411.
 2
-Mean train loss: 5.777854104758969, Perplexity 323.06518201227107
-Mean val loss: 5.95556970664433, Perplexity 385.89669597722656
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 12.24it/s]
-Saving to ./new_model.pkl with val loss 5.95556970664433.
+Mean train loss: 5.601537028890107, Perplexity 270.84238022622685
+Mean val loss: 5.7984032988548275, Perplexity 329.77259104194513
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 29.99it/s]
+Saving to ./new_model.pkl with val loss 5.7984032988548275.
 3
-Mean train loss: 5.610445521055381, Perplexity 273.265956626035
-Mean val loss: 5.8479942730494905, Perplexity 346.53862110857466
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 11.77it/s]
-Saving to ./new_model.pkl with val loss 5.8479942730494905.
+Mean train loss: 5.485286904260633, Perplexity 241.1181118888883
+Mean val loss: 5.720417610236576, Perplexity 305.0322809650709
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 30.34it/s]
+Saving to ./new_model.pkl with val loss 5.720417610236576.
 4
-Mean train loss: 5.503685215658292, Perplexity 245.59533840527092
-Mean val loss: 5.786809366089957, Perplexity 325.97130828245264
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 14.02it/s]
-Saving to ./new_model.pkl with val loss 5.786809366089957.
+Mean train loss: 5.411829429468686, Perplexity 224.04108035195017
+Mean val loss: 5.668826995577131, Perplexity 289.69452205708103
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 27.53it/s]
+Saving to ./new_model.pkl with val loss 5.668826995577131.
 5
-Mean train loss: 5.432676565070662, Perplexity 228.7607196854786
-Mean val loss: 5.760707211494446, Perplexity 317.5728406830975
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 11.42it/s]
-Saving to ./new_model.pkl with val loss 5.760707211494446.
+Mean train loss: 5.361178058524615, Perplexity 212.97569655626063
+Mean val loss: 5.634146038123539, Perplexity 279.81985975939966
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 26.30it/s]
+Saving to ./new_model.pkl with val loss 5.634146038123539.
 6
-Mean train loss: 5.383516430306865, Perplexity 217.78676247647715
-Mean val loss: 5.738497270856585, Perplexity 310.5973164716973
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 12.84it/s]
-Saving to ./new_model.pkl with val loss 5.738497270856585.
+Mean train loss: 5.323524441009143, Perplexity 205.10549181693264
+Mean val loss: 5.608154702186584, Perplexity 272.64067029870546
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 32.27it/s]
+Saving to ./new_model.pkl with val loss 5.608154702186584.
 7
-Mean train loss: 5.342563452359591, Perplexity 209.04790837260822
-Mean val loss: 5.700042642865863, Perplexity 298.8801458012866
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 14.98it/s]
-Saving to ./new_model.pkl with val loss 5.700042642865863.
+Mean train loss: 5.293374186243904, Perplexity 199.0138034210705
+Mean val loss: 5.588496976239341, Perplexity 267.33350898233465
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 30.66it/s]
+Saving to ./new_model.pkl with val loss 5.588496976239341.
 8
-Mean train loss: 5.30777475125342, Perplexity 201.90044941670155
-Mean val loss: 5.691326878752027, Perplexity 296.2864961900399
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 16.16it/s]
-Saving to ./new_model.pkl with val loss 5.691326878752027.
+Mean train loss: 5.2682046603323895, Perplexity 194.06723289366673
+Mean val loss: 5.568975162506104, Perplexity 262.1652847048358
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 31.85it/s]
+Saving to ./new_model.pkl with val loss 5.568975162506104.
 9
-Mean train loss: 5.2787191840172385, Perplexity 196.11852267953665
-Mean val loss: 5.680854153633118, Perplexity 293.1997606376639
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 14.84it/s]
-Saving to ./new_model.pkl with val loss 5.680854153633118.
+Mean train loss: 5.246950450425463, Perplexity 189.9860123852482
+Mean val loss: 5.551177207061222, Perplexity 257.54055608498203
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 27.39it/s]
+Saving to ./new_model.pkl with val loss 5.551177207061222.
 10
-Mean train loss: 5.25621944019738, Perplexity 191.75517731030845
-Mean val loss: 5.651008718354362, Perplexity 284.57838052722127
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 15.34it/s]
-Saving to ./new_model.pkl with val loss 5.651008718354362.
+Mean train loss: 5.22889866242858, Perplexity 186.58719483065042
+Mean val loss: 5.538265568869455, Perplexity 254.23666085437392
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 27.70it/s]
+Saving to ./new_model.pkl with val loss 5.538265568869455.
 11
-Mean train loss: 5.235007694265031, Perplexity 187.7305507872541
-Mean val loss: 5.680551379067557, Perplexity 293.1110006453265
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 12.98it/s]
-Saving to ./new_model.pkl with val loss 5.680551379067557.
+Mean train loss: 5.213449744395814, Perplexity 183.72677662582697
+Mean val loss: 5.530292514392308, Perplexity 252.21767753477698
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 28.45it/s]
+Saving to ./new_model.pkl with val loss 5.530292514392308.
 12
-Mean train loss: 5.21723031285693, Perplexity 184.4226829148205
-Mean val loss: 5.686080951350076, Perplexity 294.7362684869973
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 14.87it/s]
-Saving to ./new_model.pkl with val loss 5.686080951350076.
+Mean train loss: 5.200145582675778, Perplexity 181.2986338942314
+Mean val loss: 5.524431593077523, Perplexity 250.74377301086622
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 25.27it/s]
+Saving to ./new_model.pkl with val loss 5.524431593077523.
 13
-Mean train loss: 5.202000703513493, Perplexity 181.63527692802558
-Mean val loss: 5.6718624421528405, Perplexity 290.5752102668493
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 11.44it/s]
-Saving to ./new_model.pkl with val loss 5.6718624421528405.
+Mean train loss: 5.188465367169407, Perplexity 179.19334582338772
+Mean val loss: 5.520784422329494, Perplexity 249.83093330968998
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 32.92it/s]
+Saving to ./new_model.pkl with val loss 5.520784422329494.
 14
-Mean train loss: 5.188958668881935, Perplexity 179.28176401438557
-Mean val loss: 5.677526274749211, Perplexity 292.22564910707354
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 14.10it/s]
-Saving to ./new_model.pkl with val loss 5.677526274749211.
+Mean train loss: 5.178114470733156, Perplexity 177.34810050539602
+Mean val loss: 5.517192774159568, Perplexity 248.93523796940977
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 29.96it/s]
+Saving to ./new_model.pkl with val loss 5.517192774159568.
 15
-Mean train loss: 5.174834875336437, Perplexity 176.7674232051301
-Mean val loss: 5.668954089709691, Perplexity 289.73134287087424
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 14.67it/s]
-Saving to ./new_model.pkl with val loss 5.668954089709691.
+Mean train loss: 5.168749841382391, Perplexity 175.69505344509952
+Mean val loss: 5.51378322839737, Perplexity 248.08792717702235
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.83s/it]Writing model shards: 100%|██████████| 1/1 [00:01<00:00,  1.83s/it]
+Saving to ./new_model.pkl with val loss 5.51378322839737.
 16
-Mean train loss: 5.1629542770679615, Perplexity 174.67974644353507
-Mean val loss: 5.647740035397666, Perplexity 283.64970262861254
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 11.56it/s]
-Saving to ./new_model.pkl with val loss 5.647740035397666.
+Mean train loss: 5.1602832556834315, Perplexity 174.2137956646089
+Mean val loss: 5.508178126811981, Perplexity 246.70125898156704
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 31.39it/s]
+Saving to ./new_model.pkl with val loss 5.508178126811981.
 17
-Mean train loss: 5.152065380879259, Perplexity 172.78799505223736
-Mean val loss: 5.617002158505576, Perplexity 275.06354907229456
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 11.49it/s]
-Saving to ./new_model.pkl with val loss 5.617002158505576.
+Mean train loss: 5.152792715255959, Perplexity 172.9137154157487
+Mean val loss: 5.5025324514933995, Perplexity 245.31238801895915
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 27.58it/s]
+Saving to ./new_model.pkl with val loss 5.5025324514933995.
 18
-Mean train loss: 5.142283048263522, Perplexity 171.10596591022272
-Mean val loss: 5.6070812804358345, Perplexity 272.3481688898409
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 12.46it/s]
-Saving to ./new_model.pkl with val loss 5.6070812804358345.
+Mean train loss: 5.145365477529062, Perplexity 171.63420165346295
+Mean val loss: 5.497848754269736, Perplexity 244.16610558369516
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 31.00it/s]
+Saving to ./new_model.pkl with val loss 5.497848754269736.
 19
-Mean train loss: 5.132074352613188, Perplexity 169.36808303209787
-Mean val loss: 5.615592469487871, Perplexity 274.676068185939
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 12.30it/s]
-Saving to ./new_model.pkl with val loss 5.615592469487871.
+Mean train loss: 5.138886821345208, Perplexity 170.52583690540328
+Mean val loss: 5.493767535686493, Perplexity 243.171641030142
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 28.67it/s]
+Saving to ./new_model.pkl with val loss 5.493767535686493.
 20
-Mean train loss: 5.124748592740743, Perplexity 168.1318667661441
-Mean val loss: 5.602183852876935, Perplexity 271.0176242443142
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 11.43it/s]
-Saving to ./new_model.pkl with val loss 5.602183852876935.
+Mean train loss: 5.1329179527683815, Perplexity 169.51102225652753
+Mean val loss: 5.491129524367196, Perplexity 242.53099687336686
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 27.32it/s]
+Saving to ./new_model.pkl with val loss 5.491129524367196.
 21
-Mean train loss: 5.115593696909562, Perplexity 166.59966133200234
-Mean val loss: 5.60393978697913, Perplexity 271.49393139261974
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 11.92it/s]
-Saving to ./new_model.pkl with val loss 5.60393978697913.
+Mean train loss: 5.1275159540943624, Perplexity 168.59779279203383
+Mean val loss: 5.491068169048854, Perplexity 242.51611676333764
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 30.64it/s]
+Saving to ./new_model.pkl with val loss 5.491068169048854.
 22
-Mean train loss: 5.10843620812107, Perplexity 165.41148338152195
-Mean val loss: 5.602442158971514, Perplexity 271.0876387905975
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 11.63it/s]
-Saving to ./new_model.pkl with val loss 5.602442158971514.
+Mean train loss: 5.122694620899889, Perplexity 167.786883060949
+Mean val loss: 5.48962459053312, Perplexity 242.16627827787255
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 31.29it/s]
+Saving to ./new_model.pkl with val loss 5.48962459053312.
 23
-Mean train loss: 5.099917193192233, Perplexity 164.00832573168535
-Mean val loss: 5.612707500798361, Perplexity 273.88477830156364
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 10.56it/s]
-Saving to ./new_model.pkl with val loss 5.612707500798361.
+Mean train loss: 5.1182959426333845, Perplexity 167.05046336904755
+Mean val loss: 5.488694075175694, Perplexity 241.9410436452783
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 29.99it/s]
+Saving to ./new_model.pkl with val loss 5.488694075175694.
 24
-Mean train loss: 5.09389176103631, Perplexity 163.02307595069612
-Mean val loss: 5.613750319821494, Perplexity 274.1705395312498
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 12.56it/s]
-Saving to ./new_model.pkl with val loss 5.613750319821494.
+Mean train loss: 5.114308475741259, Perplexity 166.38568145581385
+Mean val loss: 5.486183682509831, Perplexity 241.33443835105336
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 30.12it/s]
+Saving to ./new_model.pkl with val loss 5.486183682509831.
 25
-Mean train loss: 5.086342244896166, Perplexity 161.79696470444384
-Mean val loss: 5.604182658876692, Perplexity 271.5598776468353
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  8.16it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  8.13it/s]
-Saving to ./new_model.pkl with val loss 5.604182658876692.
+Mean train loss: 5.110427204120719, Perplexity 165.741145051864
+Mean val loss: 5.48405465228217, Perplexity 240.82117660558848
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 32.78it/s]
+Saving to ./new_model.pkl with val loss 5.48405465228217.
 26
-Mean train loss: 5.079598873412744, Perplexity 160.70957811298092
-Mean val loss: 5.604581390108381, Perplexity 271.6681786413863
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 13.62it/s]
-Saving to ./new_model.pkl with val loss 5.604581390108381.
+Mean train loss: 5.106898686833181, Perplexity 165.15735511843135
+Mean val loss: 5.4822131787027635, Perplexity 240.3781188362975
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 31.00it/s]
+Saving to ./new_model.pkl with val loss 5.4822131787027635.
 27
-Mean train loss: 5.073212041510666, Perplexity 159.68642388755097
-Mean val loss: 5.636498892307282, Perplexity 280.479010225511
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 12.51it/s]
-Saving to ./new_model.pkl with val loss 5.636498892307282.
+Mean train loss: 5.103643116696022, Perplexity 164.6205480458361
+Mean val loss: 5.480815943649837, Perplexity 240.04248863444764
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 30.49it/s]
+Saving to ./new_model.pkl with val loss 5.480815943649837.
 28
-Mean train loss: 5.068021439725908, Perplexity 158.85970269711186
-Mean val loss: 5.658090318952288, Perplexity 286.60080350091124
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 12.89it/s]
-Saving to ./new_model.pkl with val loss 5.658090318952288.
+Mean train loss: 5.100623777468533, Perplexity 164.12425238698233
+Mean val loss: 5.4791028346334185, Perplexity 239.6316217132404
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 31.05it/s]
+Saving to ./new_model.pkl with val loss 5.4791028346334185.
 29
-Mean train loss: 5.062207419700837, Perplexity 157.9387689622212
-Mean val loss: 5.646851054259709, Perplexity 283.39765544238486
-Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00, 14.37it/s]
-Saving to ./new_model.pkl with val loss 5.646851054259709.
+Mean train loss: 5.097879675092958, Perplexity 163.6744960071188
+Mean val loss: 5.479462483951024, Perplexity 239.71782056221573
