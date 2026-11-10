@@ -576,6 +576,7 @@ class TextCollator:
 def main():
     TRAIN_FILE = "./train.txt"
     VAL_FILE = "./val.txt"
+    LOAD_MODEL = True
 
     # Train Tokenizer
     """
@@ -605,26 +606,40 @@ def main():
         vocab_size=10260, embedding_size=128, tied_weights=True
     )
 
-    model = A1RNNModel(model_config)
-    train_config = TrainingArguments(
-        optim="adamw_torch",
-        eval_strategy="epoch",
-        use_cpu=False,
-        learning_rate=1e-3,
-        num_train_epochs=30,
-        per_device_train_batch_size=32,
-        per_device_eval_batch_size=64,
-        output_dir="./new_model.pkl",
-        collator=collator,
-    )
-    trainer = A1Trainer(
-        model,
-        train_config,
-        encoded_data["train"],
-        encoded_data["test"],
-        tokenizer,
-    )
-    trainer.train()
+    if LOAD_MODEL:
+        model = A1RNNModel.from_pretrained("./new_model.pkl/", config=model_config)
+    else:
+        model = A1RNNModel(model_config)
+        train_config = TrainingArguments(
+            optim="adamw_torch",
+            eval_strategy="epoch",
+            use_cpu=False,
+            learning_rate=1e-3,
+            num_train_epochs=30,
+            per_device_train_batch_size=32,
+            per_device_eval_batch_size=64,
+            output_dir="./new_model.pkl",
+            collator=collator,
+        )
+        trainer = A1Trainer(
+            model,
+            train_config,
+            encoded_data["train"],
+            encoded_data["test"],
+            tokenizer,
+        )
+        trainer.train()
+    sentences = [
+        "She live in San",
+        "I would love to",
+        "This would be amazing if",
+        "How are you",
+        "Do you need to",
+    ]
+    model.eval()
+    data = tokenizer(sentences, truncation=False, padding=False)
+    model.eval()
+    model(data, 256)
 
 
 if __name__ == "__main__":
