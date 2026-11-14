@@ -1,6 +1,8 @@
 import pickle
 from collections import Counter
 
+import matplotlib.pyplot as plt
+
 #### Hassan Abla, Filip Björnåsen, Simon Eriksson, Arvid Kolstad
 import numpy as np
 import torch
@@ -10,12 +12,11 @@ from transformers import BatchEncoding
 
 def split_into_bytes(text):
     """Split a string into individual UTF-8 byte tokens.
-
     Args:
-        text: The input string to encode.
+            text: The input string to encode.
 
-    Returns:
-        A list containing one ``bytes`` object for each byte in the text.
+        Returns:
+            A list containing one ``bytes`` object for each byte in the text.
     """
     text_encoded = text.encode("utf-8")
     bytes_list = []
@@ -160,16 +161,6 @@ class A1Tokenizer:
         if return_tensors and return_tensors != "pt":
             raise ValueError("Should be pt")
 
-        # TODO: Your work here is to split the texts into words and map them to integer values.
-        #
-        # - If `truncation` is set to True, the length of the encoded sequences should be
-        #   at most self.model_max_length.
-        # - If `padding` is set to True, then all the integer-encoded sequences should be of the
-        #   same length. That is: the shorter sequences should be "padded" by adding dummy padding
-        #   tokens on the right side.
-        # - If `return_tensors` is undefined, then the returned `input_ids` should be a list of lists.
-        #   Otherwise, if `return_tensors` is 'pt', then `input_ids` should be a PyTorch 2D tensor.
-
         byte_sequences = [split_into_bytes(text.strip()) for text in texts]
         for merge in self.merges:
             byte_sequences = merge_tokens(byte_sequences, merge)
@@ -186,7 +177,7 @@ class A1Tokenizer:
         if truncation and self.model_max_length > 2:
             encoded_sequences = [
                 seq[: self.model_max_length - 2] for seq in encoded_sequences
-            ]  ### Fråga om BOS EOS ska räknas med i max L, #måste vara större än 2 för att kunna lägga till BOS och EOS
+            ]
 
         encoded_sequences = [
             [self.vocabulary[self.bos_token]] + seq + [self.vocabulary[self.eos_token]]
@@ -209,11 +200,6 @@ class A1Tokenizer:
         if return_tensors == "pt":
             encoded_sequences = torch.tensor(encoded_sequences, dtype=torch.long)
             attention_mask = torch.tensor(attention_mask, dtype=torch.long)
-
-        # TODO: Return a BatchEncoding where input_ids stores the result of the integer encoding.
-        # Optionally, if you want to be 100% HuggingFace-compatible, you should also include an
-        # attention mask of the same shape as input_ids. In this mask, padding tokens correspond
-        # to the the value 0 and real tokens to the value 1.
 
         return BatchEncoding(
             {"input_ids": encoded_sequences, "attention_mask": attention_mask}
@@ -240,7 +226,6 @@ class A1Tokenizer:
             tokens.append(token)
         text_bytes = b"".join(tokens)
         decoded_text = text_bytes.decode("utf-8")
-        # kan ett okänt token_id finnas med ids? vad händer då?
         return decoded_text
 
     def save(self, filename):
@@ -255,10 +240,40 @@ class A1Tokenizer:
             return pickle.load(f)
 
 
+class TrainingArguments:
+    def __init__(
+        self,
+        optim: str = "adamw_torch",
+        eval_strategy: str = "epoch",
+        use_cpu: bool = False,
+        learning_rate: float = 1e-3,
+        num_train_epochs: int = 100,
+        per_device_train_batch_size: int = 32,
+        per_device_eval_batch_size: int = 64,
+        output_dir: str = "./models/new_model",
+        collator=None,
+    ):
+        self.optim = optim
+        self.eval_strategy = eval_strategy
+        self.use_cpu = use_cpu
+        self.learning_rate = learning_rate
+        self.num_train_epochs = num_train_epochs
+        self.per_device_train_batch_size = per_device_train_batch_size
+        self.per_device_eval_batch_size = per_device_eval_batch_size
+        self.output_dir = output_dir
+        self.collator = collator
+
+
 class A1Trainer:
     """A minimal implementation similar to a Trainer from the HuggingFace library."""
 
-    def __init__(self, model, args, train_dataset, eval_dataset, processing_class):
+    def __init__(
+        self,
+        model: torch.nn.Module,
+        args: TrainingArguments,
+        train_dataset: dict,
+        eval_dataset: dict,
+    ):
         """Set up the trainer.
 
         Args:
@@ -266,16 +281,12 @@ class A1Trainer:
           args:           The training parameters stored in a TrainingArguments object.
           train_dataset:  The dataset containing the training documents.
           eval_dataset:   The dataset containing the validation documents.
-          eval_dataset:   The dataset containing the validation documents.
           processing_class:      The tokenizer.
         """
         self.model = model
         self.args = args
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
-        self.processing_class = processing_class
-
-        self.pad_token_id = processing_class.pad_token_id
 
         assert args.optim == "adamw_torch"
         assert args.eval_strategy == "epoch"
@@ -290,18 +301,6 @@ class A1Trainer:
             return torch.device("mps")
         return torch.device("cpu")
 
-    def collate(self, batch):
-        max_len = max(len(ex["input_ids"]) for ex in batch)
-        ids = [
-            ex["input_ids"] + [self.pad_token_id] * (max_len - len(ex["input_ids"]))
-            for ex in batch
-        ]
-        mask = [
-            ex["attention_mask"] + [0] * (max_len - len(ex["attention_mask"]))
-            for ex in batch
-        ]
-        return {"input_ids": torch.tensor(ids), "attention_mask": torch.tensor(mask)}
-
     def train(self):
         """Train the model."""
         args = self.args
@@ -310,100 +309,100 @@ class A1Trainer:
         print("Device:", device)
         self.model.to(device)
 
-        # TODO: Relevant arguments: at least args.learning_rate, but you can optionally also consider
-        # other Adam-related hyperparameters here.
-        optimizer = torch.optim.AdamW(self.model.parameters(), lr=args.learning_rate)
+        best_loss = 1e8
+        train_loss: list[float] = []
+        train_perplex: list[float] = []
 
-        # TODO: Relevant arguments: args.per_device_train_batch_size, args.per_device_eval_batch_size
-        train_loader = DataLoader(
-            self.train_dataset,
-            batch_size=args.per_device_train_batch_size,
-            shuffle=True,
-            collate_fn=self.collate,
-        )
-        val_loader = DataLoader(
-            self.eval_dataset,
-            batch_size=args.per_device_eval_batch_size,
-            shuffle=False,
-            collate_fn=self.collate,
+        val_loss: list[float] = []
+        val_perplex: list[float] = []
+        optimizer = torch.optim.AdamW(
+            self.model.parameters(), lr=self.args.learning_rate
         )
 
-        # TODO: Your work here is to implement the training loop.
-        #
-        # for each training epoch (use args.num_train_epochs here):
-        #   for each batch B in the training set:
-        #
-        #       PREPROCESSING AND FORWARD PASS:
-        #       labels = apply your tokenizer to B
-        #       replace padding tokens with value -100 so loss function will ignore them
-        #       put labels onto the GPU (or whatever device you use)
-        #       apply the model to labels
-        #
-        #       BACKWARD PASS AND MODEL UPDATE:
-        #       optimizer.zero_grad()
-        #       loss.backward() # loss is stored as an attribute of model's output
-        #       optimizer.step()
-
+        if self.args.collator:
+            train_loader = DataLoader(
+                self.train_dataset["input_ids"],
+                batch_size=args.per_device_train_batch_size,
+                collate_fn=args.collator,
+            )
+            val_loader = DataLoader(
+                self.eval_dataset["input_ids"],
+                batch_size=args.per_device_eval_batch_size,
+                collate_fn=args.collator,
+            )
+        else:
+            train_loader = DataLoader(
+                self.train_dataset["input_ids"],
+                batch_size=args.per_device_train_batch_size,
+            )
+            val_loader = DataLoader(
+                self.eval_dataset["input_ids"],
+                batch_size=args.per_device_eval_batch_size,
+            )
         for epoch in range(args.num_train_epochs):
+            print(epoch)
             self.model.train()
             total_train_loss = 0.0
-            for batch_idx, batch in enumerate(train_loader):
-                input_ids = batch["input_ids"].to(device)
-                attention_mask = batch["attention_mask"].to(device)
-                labels = input_ids.clone()
-                labels[labels == self.pad_token_id] = -100
-
-                outputs = self.model(
-                    input_ids=input_ids, attention_mask=attention_mask, labels=labels
-                )
-                loss = outputs.loss
+            for batch in train_loader:
+                batch = batch.to(device)
                 optimizer.zero_grad()
-                loss.backward()
+                model_outputs = self.model(batch)
+                total_train_loss += model_outputs.loss.item()
+                model_outputs.loss.backward()
                 optimizer.step()
 
-                total_train_loss += loss.item()
+            avg_train_loss = total_train_loss / len(train_loader)
+            avg_train_p = np.exp(avg_train_loss)
+            print(f"Mean train loss: {avg_train_loss}, Perplexity {avg_train_p}")
 
-                if batch_idx % 100 == 0:
-                    print(
-                        f"Epoch {epoch + 1}, Batch index {batch_idx}, Loss: {loss.item():.4f}"
-                    )
+            train_loss.append(avg_train_loss)
+            train_perplex.append(avg_train_p)
 
-            avg_train_loss = (
-                total_train_loss / len(train_loader)
-                if len(train_loader) > 0
-                else float("inf")
-            )
-            perplexity = np.exp(avg_train_loss)
-
-            print(
-                f"Epoch {epoch + 1}/{args.num_train_epochs}, Average Training Loss: {avg_train_loss:.4f}, Perplexity: {perplexity:.4f}"
-            )
-
-            # Evaluate the model on the validation set after each epoch
+            total_val_loss = 0.0
             self.model.eval()
-            total_loss = 0.0
-            num_batches = 0
-            with torch.no_grad():
-                for batch in val_loader:
-                    input_ids = batch["input_ids"].to(device)
-                    attention_mask = batch["attention_mask"].to(device)
+            for batch in val_loader:
+                batch = batch.to(device)
+                total_val_loss += self.model(batch).loss.item()
+            avg_val_loss = total_val_loss / len(val_loader)
+            avg_val_p = np.exp(avg_val_loss)
+            print(f"Mean val loss: {avg_val_loss}, Perplexity {avg_val_p}")
+            val_loss.append(avg_val_loss)
+            val_perplex.append(avg_val_p)
 
-                    labels = input_ids.clone()
-                    labels[labels == self.processing_class.pad_token_id] = -100
+            if avg_val_loss < best_loss:
+                best_loss = avg_val_loss
+                self.model.save_pretrained(args.output_dir)
+                print(f"Saving to {args.output_dir} with val loss {avg_val_loss}.")
 
-                    outputs = self.model(
-                        input_ids=input_ids,
-                        attention_mask=attention_mask,
-                        labels=labels,
-                    )
-                    total_loss += outputs.loss.item()
-                    num_batches += 1
+        fig, axes = plt.subplots(2, 1, figsize=(8, 8), sharex=True)
 
-            avg_loss = total_loss / num_batches if num_batches > 0 else float("inf")
-            val_perplexity = np.exp(avg_loss)
-            print(
-                f"Epoch {epoch + 1}/{args.num_train_epochs}, Validation Loss: {avg_loss:.4f}, Perplexity: {val_perplexity:.4f}"
-            )
+        axes[0].plot(train_loss, color="blue", label="Training")
+        axes[0].plot(val_loss, color="red", label="Validation")
+        axes[0].set_title("Loss")
+        axes[0].set_ylabel("Loss")
+        axes[0].legend()
 
-        print(f"Saving to {args.output_dir}.")
-        self.model.save_pretrained(args.output_dir)
+        axes[1].plot(train_perplex, color="blue", label="Training")
+        axes[1].plot(val_perplex, color="red", label="Validation")
+        axes[1].set_title("Perplexity")
+        axes[1].set_ylabel("Perplexity")
+        axes[1].set_xlabel("Epoch")
+        axes[1].legend()
+
+        fig.tight_layout()
+        fig.savefig("./latest_training.pdf")
+        plt.close(fig)
+
+
+class TextCollator:
+    def __init__(self, tokenizer):
+        self.token_id: int = tokenizer.pad_token_id
+
+    def __call__(self, samples):
+        max_length = max(len(x) for x in samples)
+        padded = []
+        for sample in samples:
+            total_padding = max_length - len(sample)
+            padding = torch.full((total_padding,), self.token_id, dtype=torch.long)
+            padded.append(torch.cat((sample, padding)))
+        return torch.stack(padded)

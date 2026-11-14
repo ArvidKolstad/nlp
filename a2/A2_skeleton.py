@@ -1,7 +1,8 @@
 import math
 
 import torch
-from ax_modules import A1Tokenizer
+from ax_modules import A1Tokenizer, A1Trainer, TextCollator, TrainingArguments
+from datasets import load_dataset, load_from_disk
 from torch import nn
 from transformers import PretrainedConfig, PreTrainedModel
 from transformers.modeling_outputs import CausalLMOutputWithPast
@@ -27,13 +28,13 @@ class A2ModelConfig(PretrainedConfig):
         super().__init__(**kwargs)
         self.vocab_size = vocab_size
         self.hidden_size = hidden_size
-        self.max_position_embeddings = max_position_embeddings
-        self.rms_norm_eps = rms_norm_eps
+        self.intermediate_size = intermediate_size
         self.num_attention_heads = num_attention_heads
+        self.num_hidden_layers = num_hidden_layers
         self.rope_theta = rope_theta
         self.hidden_act = hidden_act
-        self.intermediate_size = intermediate_size
-        self.num_hidden_layers = num_hidden_layers
+        self.max_position_embeddings = max_position_embeddings
+        self.rms_norm_eps = rms_norm_eps
         self.pad_token_id = pad_token_id
 
 
@@ -59,7 +60,7 @@ class A2RMSNorm(nn.Module):
     def __init__(self, config):
         super().__init__()
         self.rms_norm_eps: float = config.rms_norm_eps
-        self.gain = nn.Parameter(torch.ones(config.hiddes_size))
+        self.gain = nn.Parameter(torch.ones(config.hidden_size))
 
     def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
         rms = torch.sqrt(
@@ -131,11 +132,11 @@ class A2DecoderLayer(nn.Module):
     def forward(self, hidden_states, rope_rotations) -> torch.Tensor:
 
         x = (
-            self.attn_norm(self.attention_layer(hidden_states.clone(), rope_rotations))
+            self.attn_norm(self.attention_layer(hidden_states, rope_rotations))
             + hidden_states
         )
 
-        return self.mlp_norm(self.mlp(x.clone())) + x
+        return self.mlp_norm(self.mlp(x) + x)
 
 
 class A2Transformer(PreTrainedModel):
@@ -153,7 +154,9 @@ class A2Transformer(PreTrainedModel):
         self.transformer_layers = nn.ModuleList(
             [A2DecoderLayer(config) for _ in range(config.num_hidden_layers)]
         )
-        self.unembedding_layer = nn.Linear(config.hidden_size, config.vocab_size)
+        self.unembedding_layer = nn.Linear(
+            config.hidden_size, config.vocab_size, bias=False
+        )
 
         self.norm_layer = A2RMSNorm(config)
         self.pad_token_id = config.pad_token_id
@@ -173,7 +176,7 @@ class A2Transformer(PreTrainedModel):
         loss_func = nn.CrossEntropyLoss(ignore_index=self.pad_token_id)
 
         X = labels[..., :-1, :]
-        Y = labels[..., 1:, :].reshape(-1)
+        Y = labels[..., 1:].reshape(-1)
 
         rope_rotations = self.rotary_emb(
             X
@@ -262,8 +265,40 @@ class A2RotaryEmbedding(nn.Module):
 
 
 def main():
-    print("Hello World")
-    tokenizer = A1Tokenizer()
+    tokenizer = A1Tokenizer.from_file("tokenizer.pkl")
+    vocab_size = len(tokenizer)
+
+    dataset = load_dataset("text", data_files={"train": "train.txt", "test": "val.txt"})
+    # reduce data
+    # dataset = dataset["test"].train_test_split(test_size=0.5, train_size=0.5)
+    dataset = dataset.filter(lambda x: x["text"].strip() != "")
+    dataset = dataset.map(
+        lambda batch: dict(tokenizer(batch["text"], truncation=False, padding=False)),
+        batched=True,
+        remove_columns=["text"],
+    )
+
+    dataset.save_to_disk("tokenized_text")
+    encoded_data = load_from_disk("tokenized_text")
+    model_config = A2ModelConfig(
+        vocab_size=vocab_size,
+        hidden_size=256,
+        intermediate_size=512,
+        num_attention_heads=8,
+        num_hidden_layers=3,
+        rope_theta=10000,
+        rms_norm_eps=1e-6,
+        pad_token_id=tokenizer.pad_token_id,
+    )
+    collator = TextCollator(tokenizer)
+
+    train_config = TrainingArguments(num_train_epochs=10, collator=collator)
+    model = A2Transformer(model_config)
+    trainer = A1Trainer(
+        model, train_config, encoded_data["train"], encoded_data["test"]
+    )
+
+    trainer.train()
 
 
 if __name__ == "__main__":
