@@ -266,6 +266,7 @@ class A2RotaryEmbedding(nn.Module):
 
 def main():
     tokenizer = A1Tokenizer.from_file("tokenizer.pkl")
+    print(tokenizer.model_max_length)
     vocab_size = len(tokenizer)
 
     dataset = load_dataset("text", data_files={"train": "train.txt", "test": "val.txt"})
@@ -273,7 +274,7 @@ def main():
     # dataset = dataset["test"].train_test_split(test_size=0.5, train_size=0.5)
     dataset = dataset.filter(lambda x: x["text"].strip() != "")
     dataset = dataset.map(
-        lambda batch: dict(tokenizer(batch["text"], truncation=False, padding=False)),
+        lambda batch: dict(tokenizer(batch["text"], truncation=True, padding=False)),
         batched=True,
         remove_columns=["text"],
     )
