@@ -2,7 +2,7 @@ import math
 
 import torch
 from ax_modules import A1Tokenizer, A1Trainer, TextCollator, TrainingArguments
-from datasets import load_dataset, load_from_disk
+from datasets import load_from_disk
 from torch import nn
 from transformers import PretrainedConfig, PreTrainedModel
 from transformers.modeling_outputs import CausalLMOutputWithPast
@@ -165,32 +165,21 @@ class A2Transformer(PreTrainedModel):
         self.post_init()
 
     def forward(self, labels):
-        """The forward pass of the Transformer language model.
+        rope_rotations = self.rotary_emb(labels)
 
-        Args:
-          labels:  The input tensor (2D), consisting of a batch of integer-encoded texts.
-        Returns:
-          CausalLMOutputWithPast object that stores loss and logits (the output tensor (3D) for all token positions for all vocabulary items.)
-        """
-
-        loss_func = nn.CrossEntropyLoss(ignore_index=self.pad_token_id)
-
-        X = labels[..., :-1, :]
-        Y = labels[..., 1:].reshape(-1)
-
-        rope_rotations = self.rotary_emb(
-            X
-        )  # pass this to all the transformer decoder layers
-
-        # TODO: Call embedding, transformer decoder layers, last normalizer, and unembedding.
-        output = self.embedding_layer(X)
+        output = self.embedding_layer(labels)
         for layer in self.transformer_layers:
             output = layer(output, rope_rotations)
-
         output = self.norm_layer(output)
         logits = self.unembedding_layer(output)
-        loss = loss_func(logits.reshape(-1, logits.size(-1)), Y)
-        # TODO: compute the loss for the model output and Y
+
+        shift_logits = logits[..., :-1, :]
+        shift_labels = labels[..., 1:]
+        loss_func = nn.CrossEntropyLoss(ignore_index=self.pad_token_id)
+        loss = loss_func(
+            shift_logits.reshape(-1, shift_logits.size(-1)), shift_labels.reshape(-1)
+        )
+
         return CausalLMOutputWithPast(loss=loss, logits=logits)
 
 
@@ -268,7 +257,7 @@ def main():
     tokenizer = A1Tokenizer.from_file("tokenizer.pkl")
     print(tokenizer.model_max_length)
     vocab_size = len(tokenizer)
-
+    """
     dataset = load_dataset("text", data_files={"train": "train.txt", "test": "val.txt"})
     # reduce data
     # dataset = dataset["test"].train_test_split(test_size=0.5, train_size=0.5)
@@ -280,7 +269,9 @@ def main():
     )
 
     dataset.save_to_disk("tokenized_text")
-    encoded_data = load_from_disk("tokenized_text")
+    """
+
+    encoded_data = load_from_disk("tokenized_text").with_format("torch")
     model_config = A2ModelConfig(
         vocab_size=vocab_size,
         hidden_size=256,
