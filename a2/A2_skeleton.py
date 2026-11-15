@@ -275,16 +275,16 @@ def main():
     model_config = A2ModelConfig(
         vocab_size=vocab_size,
         hidden_size=256,
-        intermediate_size=512,
+        intermediate_size=1024,
         num_attention_heads=8,
-        num_hidden_layers=3,
+        num_hidden_layers=4,
         rope_theta=10000,
         rms_norm_eps=1e-6,
         pad_token_id=tokenizer.pad_token_id,
     )
     collator = TextCollator(tokenizer)
 
-    train_config = TrainingArguments(num_train_epochs=10, collator=collator)
+    train_config = TrainingArguments(num_train_epochs=40, collator=collator)
     model = A2Transformer(model_config)
     trainer = A1Trainer(
         model, train_config, encoded_data["train"], encoded_data["test"]
