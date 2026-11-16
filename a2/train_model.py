@@ -136,7 +136,7 @@ class A2DecoderLayer(nn.Module):
             + hidden_states
         )
 
-        return self.mlp_norm(self.mlp(x) + x)
+        return self.mlp_norm(self.mlp(x)) + x
 
 
 class A2Transformer(PreTrainedModel):
