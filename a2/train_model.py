@@ -284,7 +284,7 @@ def main():
     collator = TextCollator(tokenizer)
 
     train_config = TrainingArguments(
-        num_train_epochs=100, optim="adamw_torch", eval_strategy="epoch"
+        num_train_epochs=30, optim="adamw_torch", eval_strategy="epoch"
     )
     model = A2Transformer(model_config)
     trainer = A1Trainer(
