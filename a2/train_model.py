@@ -275,8 +275,8 @@ def main():
         vocab_size=vocab_size,
         hidden_size=256,
         intermediate_size=1024,
-        num_attention_heads=8,
-        num_hidden_layers=4,
+        num_attention_heads=4,
+        num_hidden_layers=8,
         rope_theta=10000,
         rms_norm_eps=1e-6,
         pad_token_id=tokenizer.pad_token_id,
@@ -284,7 +284,12 @@ def main():
     collator = TextCollator(tokenizer)
 
     train_config = TrainingArguments(
-        num_train_epochs=30, optim="adamw_torch", eval_strategy="epoch"
+        num_train_epochs=10,
+        optim="adamw_torch",
+        eval_strategy="epoch",
+        learning_rate=0.0003,
+        per_device_train_batch_size=128,
+        per_device_eval_batch_size=128,
     )
     model = A2Transformer(model_config)
     trainer = A1Trainer(

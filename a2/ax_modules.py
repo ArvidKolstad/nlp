@@ -159,7 +159,7 @@ class A1Tokenizer:
         if return_tensors and return_tensors != "pt":
             raise ValueError("Should be pt")
 
-        byte_sequences = [split_into_bytes(text.strip()) for text in texts]
+        byte_sequences = [split_into_bytes(text) for text in texts]
         for merge in self.merges:
             byte_sequences = merge_tokens(byte_sequences, merge)
         encoded_sequences = []
