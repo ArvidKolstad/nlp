@@ -9,5 +9,5 @@
 
 cd ~/project/nlp/a2
 source ~/.venv/bin/activate
-python3 A2_skeleton.py
+python3 train_model.py
 
