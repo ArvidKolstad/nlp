@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
-from transformers import BatchEncoding
+from transformers import BatchEncoding, TrainingArguments
 
 
 def split_into_bytes(text):
@@ -90,9 +90,7 @@ def build_tokenizer(
 
     merges = []
 
-    if max_voc_size is not None and max_voc_size < len(
-        vocabulary
-    ):  # ör detta nödvändigt?
+    if max_voc_size is not None and max_voc_size < len(vocabulary):
         raise ValueError(
             "Vocabulary size must be at least 260 (4 special tokens + 256 bytes)"
         )
@@ -240,30 +238,6 @@ class A1Tokenizer:
             return pickle.load(f)
 
 
-class TrainingArguments:
-    def __init__(
-        self,
-        optim: str = "adamw_torch",
-        eval_strategy: str = "epoch",
-        use_cpu: bool = False,
-        learning_rate: float = 1e-3,
-        num_train_epochs: int = 100,
-        per_device_train_batch_size: int = 32,
-        per_device_eval_batch_size: int = 64,
-        output_dir: str = "./models/new_model",
-        collator=None,
-    ):
-        self.optim = optim
-        self.eval_strategy = eval_strategy
-        self.use_cpu = use_cpu
-        self.learning_rate = learning_rate
-        self.num_train_epochs = num_train_epochs
-        self.per_device_train_batch_size = per_device_train_batch_size
-        self.per_device_eval_batch_size = per_device_eval_batch_size
-        self.output_dir = output_dir
-        self.collator = collator
-
-
 class A1Trainer:
     """A minimal implementation similar to a Trainer from the HuggingFace library."""
 
@@ -271,6 +245,7 @@ class A1Trainer:
         self,
         model: torch.nn.Module,
         args: TrainingArguments,
+        collate_fn,
         train_dataset: dict,
         eval_dataset: dict,
     ):
@@ -287,6 +262,7 @@ class A1Trainer:
         self.args = args
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
+        self.collate_fn = collate_fn
 
         assert args.optim == "adamw_torch"
         assert args.eval_strategy == "epoch"
@@ -315,20 +291,18 @@ class A1Trainer:
 
         val_loss: list[float] = []
         val_perplex: list[float] = []
-        optimizer = torch.optim.AdamW(
-            self.model.parameters(), lr=self.args.learning_rate
-        )
+        optimizer = torch.optim.AdamW(self.model.parameters(), lr=args.learning_rate)
 
-        if self.args.collator:
+        if self.collate_fn:
             train_loader = DataLoader(
                 self.train_dataset["input_ids"],
                 batch_size=args.per_device_train_batch_size,
-                collate_fn=args.collator,
+                collate_fn=self.collate_fn,
             )
             val_loader = DataLoader(
                 self.eval_dataset["input_ids"],
                 batch_size=args.per_device_eval_batch_size,
-                collate_fn=args.collator,
+                collate_fn=self.collate_fn,
             )
         else:
             train_loader = DataLoader(
@@ -339,7 +313,7 @@ class A1Trainer:
                 self.eval_dataset["input_ids"],
                 batch_size=args.per_device_eval_batch_size,
             )
-        for epoch in range(args.num_train_epochs):
+        for epoch in range(int(args.num_train_epochs)):
             print(epoch)
             self.model.train()
             total_train_loss = 0.0

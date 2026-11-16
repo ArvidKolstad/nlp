@@ -4,7 +4,7 @@ import torch
 from ax_modules import A1Tokenizer, A1Trainer, TextCollator, TrainingArguments
 from datasets import load_from_disk
 from torch import nn
-from transformers import PretrainedConfig, PreTrainedModel
+from transformers import PretrainedConfig, PreTrainedModel, TrainingArguments
 from transformers.modeling_outputs import CausalLMOutputWithPast
 
 
@@ -255,7 +255,6 @@ class A2RotaryEmbedding(nn.Module):
 
 def main():
     tokenizer = A1Tokenizer.from_file("tokenizer.pkl")
-    print(tokenizer.model_max_length)
     vocab_size = len(tokenizer)
     """
     dataset = load_dataset("text", data_files={"train": "train.txt", "test": "val.txt"})
@@ -284,10 +283,12 @@ def main():
     )
     collator = TextCollator(tokenizer)
 
-    train_config = TrainingArguments(num_train_epochs=40, collator=collator)
+    train_config = TrainingArguments(
+        num_train_epochs=100, optim="adamw_torch", eval_strategy="epoch"
+    )
     model = A2Transformer(model_config)
     trainer = A1Trainer(
-        model, train_config, encoded_data["train"], encoded_data["test"]
+        model, train_config, collator, encoded_data["train"], encoded_data["test"]
     )
 
     trainer.train()
