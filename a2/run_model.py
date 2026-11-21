@@ -42,10 +42,10 @@ def main():
 
     model = A2Transformer.from_pretrained("./models/new_model/")
     model.rotary_emb = A2RotaryEmbedding(model.config)
-    temp = 0.8
+    temp = 0.1
     k = 50
     model = model.to(torch.device("cpu"))
-    # prompt = ["Today is a great "]
+    prompt = ["Today is a great "]
     # prompt = ["In natural language processing, a Transformer"]
     # prompt = ["Is Stockholm the capital of Sweden? Answer yes or no. The answer is "]
     # prompt = ["Write a Python program that reverses a list."]
