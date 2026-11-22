@@ -1,0 +1,124 @@
+import numpy as np
+from text_preprocessing import BOWDataTokenizer
+
+
+class LDA:
+    def __init__(self, corpus, tokenizer, n_topics, alpha, beta):
+        self.n_topics = n_topics
+        self.alpha = alpha
+        self.beta = beta
+        self.tokenizer = tokenizer
+        self.z = None
+        self.phi = None
+        self.theta = None
+        self.corpus = corpus
+
+    def train(
+        self,
+        iterations: int,
+        rng: np.random.Generator,
+    ):
+        V = len(self.tokenizer)
+        D = len(self.corpus)
+        N = sum([len(text) for text in self.corpus])
+
+        topics = np.arange(0, self.n_topics, dtype=np.int64)
+
+        self.z = rng.integers(low=0, high=self.n_topics, size=N)
+        w_ids = np.array(
+            [self.tokenizer(word) for text in self.corpus for word in text]
+        )
+        d_ids = [d for d, text in enumerate(self.corpus) for _ in text]
+
+        n_dk = np.zeros((D, self.n_topics), dtype=np.int64)
+        n_kw = np.zeros((self.n_topics, self.V), dtype=np.int64)
+        n_k = np.zeros(self.n_topics, dtype=np.int64)
+
+        np.add.at(self.n_dk, (d_ids, self.z), 1)
+        np.add.at(self.n_kw, (self.z, w_ids), 1)
+        np.add.at(self.n_k, self.z, 1)
+
+        for iteration in range(iterations):
+            print(f"Starting iteration {iteration}")
+            for i, id in enumerate(w_ids):
+                old_z = self.z[i]
+                n_dk[d_ids[i], old_z] -= 1
+                n_kw[old_z, id] -= 1
+                n_k[old_z] -= 1
+
+                q = np.array(
+                    [
+                        (
+                            (n_dk[d_ids[i], k] + self.alpha)
+                            * (n_kw[k, id] + self.beta)
+                            / (n_k[k] + V * self.beta)
+                        )
+                        for k in range(self.n_topics)
+                    ]
+                )
+                p = q / np.sum(q)
+                new_z = rng.choice(
+                    topics,
+                    p=p,
+                )
+
+                n_dk[d_ids[i], new_z] += 1
+                n_kw[new_z, id] += 1
+                n_k[new_z] += 1
+
+                self.z[i] = new_z
+
+        N_d = np.sum(n_dk, axis=1)
+
+        self.theta = (n_dk + self.alpha) / (N_d[:, None] + self.n_topics * self.alpha)
+        self.phi = (n_kw + self.beta) / (n_k[:, None] + V * self.beta)
+
+    def get_top_k_words(self, k: int):
+        words = [word for texts in self.vocabular for word in texts]
+        total_counter = {}
+        top_k_best_words = []
+        for word in words:
+            if total_counter.get(word):
+                total_counter[words] += 1
+            else:
+                total_counter[word] = 1
+
+        for K in range(self.n_topics):
+            k_mask = self.z == K
+            words_in_k = words[k_mask]
+            counter = {}
+            for word in words_in_k:
+                if counter.get(word):
+                    counter[words] += 1
+                else:
+                    counter[word] = 1
+            relative_counter = {
+                key: value / total_counter[key] for key, value in counter.items()
+            }
+            top_k_best_words.append(
+                sorted(relative_counter, key=counter.get, reverse=True)[:k]
+            )
+        return top_k_best_words
+
+    def print_k_best_words(self, k: int):
+        top_k_best = self.get_top_k_words(k)
+        for topic, words in enumerate(top_k_best):
+            print(f"Topic {topic}: \n")
+            for placement, w in enumerate(words):
+                print(f"{}")
+
+
+def main():
+
+    n_topics = 10
+    alpha = 0.01
+    beta = 0.01
+    iterations = 40
+    tokenizer = BOWDataTokenizer.load("./tokenizer.pkl")
+    model = LDA(n_topics, alpha, beta)
+    gen = np.random.default_rng(seed=42)
+    model.train(iterations, tokenizer.corpus, tokenizer, gen)
+
+
+if __name__ == "__main__":
+    main()
