@@ -1,0 +1,141 @@
+Used dataset: Reuters
+Topic 1: 
+
+1. diamond
+2. crude
+3. opec
+4. barrels
+5. refineries
+6. qatar
+7. texaco
+8. refining
+9. crudes
+10. refinery
+C_Umass score:-477.541
+
+Topic 2: 
+
+1. shr
+2. revs
+3. oper
+4. mths
+5. carryforwards
+6. avg
+7. shrs
+8. rev
+9. carryforward
+10. minorities
+C_Umass score:-379.947
+
+Topic 3: 
+
+1. maize
+2. crop
+3. corn
+4. sugar
+5. palm
+6. drought
+7. sown
+8. zaire
+9. india
+10. zimbabwe
+C_Umass score:-497.360
+
+Topic 4: 
+
+1. heller
+2. inflationary
+3. currencies
+4. pushed
+5. interbank
+6. ems
+7. bundesbank
+8. bullish
+9. intervene
+10. volatility
+C_Umass score:-457.358
+
+Topic 5: 
+
+1. mulroney
+2. cranes
+3. vessel
+4. chipmakers
+5. microchip
+6. semiconductors
+7. chips
+8. miti
+9. bilateral
+10. curbs
+C_Umass score:-395.600
+
+Topic 6: 
+
+1. lyng
+2. draft
+3. rep
+4. sen
+5. democrat
+6. drafting
+7. ico
+8. delegate
+9. delegates
+10. negotiators
+C_Umass score:-404.199
+
+Topic 7: 
+
+1. advances
+2. seasonally
+3. maturing
+4. gdp
+5. keating
+6. unadjusted
+7. francs
+8. institutes
+9. diw
+10. jobless
+C_Umass score:-442.149
+
+Topic 8: 
+
+1. excellent
+2. cathay
+3. swire
+4. murray
+5. hongkong
+6. automotive
+7. aegon
+8. honeywell
+9. incurred
+10. anacomp
+C_Umass score:-319.667
+
+Topic 9: 
+
+1. proration
+2. definitive
+3. dixons
+4. cyclops
+5. cyl
+6. citicorp
+7. cyacq
+8. terminate
+9. peabody
+10. undisclosed
+C_Umass score:-464.344
+
+Topic 10: 
+
+1. qtly
+2. prev
+3. norstar
+4. qtrly
+5. hikes
+6. declares
+7. payout
+8. redeem
+9. hoechst
+10. reichhold
+C_Umass score:-426.601
+

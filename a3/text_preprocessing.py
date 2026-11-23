@@ -6,6 +6,8 @@ import nltk
 import numpy as np
 from nltk.corpus import reuters, stopwords
 
+# Arvid Kolstad, Simon Eriksson, Hassan Abla, Filip Björnåsen
+
 TOKEN_RE = re.compile(r"[a-z]+")
 
 
@@ -81,8 +83,10 @@ def remove_common_and_rare_words(
         for word, count in total_counts.items()
         if (count >= rare_threshold)
         and (doc_freq[word] / total_docs < common_threshold)
+        and len(word) >= 3
     }
     cleaned_docs = [[word for word in doc if word in keep] for doc in docs]
+
     return cleaned_docs
 
 

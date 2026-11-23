@@ -4,6 +4,8 @@ from collections import Counter
 import numpy as np
 from text_preprocessing import BOWDataTokenizer
 
+# Arvid Kolstad, Simon Eriksson, Hassan Abla, Filip Björnåsen
+
 
 class LDA:
     def __init__(self, corpus, tokenizer, n_topics, alpha, beta):
@@ -49,15 +51,10 @@ class LDA:
                 n_kw[old_z, id] -= 1
                 n_k[old_z] -= 1
 
-                q = np.array(
-                    [
-                        (
-                            (n_dk[d_ids[i], k] + self.alpha)
-                            * (n_kw[k, id] + self.beta)
-                            / (n_k[k] + V * self.beta)
-                        )
-                        for k in range(self.n_topics)
-                    ]
+                q = (
+                    (n_dk[d_ids[i], :] + self.alpha)
+                    * (n_kw[:, id] + self.beta)
+                    / (n_k + V * self.beta)
                 )
                 p = q / np.sum(q)
                 new_z = rng.choice(
@@ -100,10 +97,12 @@ class LDA:
 
 def print_k_best_words(top_k_best, umass_score) -> None:
     for topic, words in enumerate(top_k_best):
-        print(f"Topic {topic}: \n")
+        print(f"Topic {topic + 1}: \n")
         for placement, w in enumerate(words):
-            print(f"{placement}. {w}")
-        print(f"C_Umass score:{umass_score[topic]}")
+            print(f"{placement + 1}. {w}")
+            if placement >= 9:
+                break
+        print(f"C_Umass score:{umass_score[topic]:.3f}")
         print()
 
 
@@ -139,6 +138,7 @@ def umas_coherence(words: list[list[str]], corpus):
 
 
 def main():
+    print("Used dataset: Reuters")
     tokenizer = BOWDataTokenizer.load("./tokenizer.pkl")
     model_path = "./lda_model.pkl"
 
@@ -146,10 +146,11 @@ def main():
         model = LDA.load(model_path)
 
     else:
-        n_topics = 10
-        alpha = 0.01
-        beta = 0.01
+        n_topics = 50
+        alpha = 0.1
+        beta = 0.1
         iterations = 200
+
         model = LDA(tokenizer.corpus, tokenizer, n_topics, alpha, beta)
         gen = np.random.default_rng(seed=42)
         model.train(iterations, gen)

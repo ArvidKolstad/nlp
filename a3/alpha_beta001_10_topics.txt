@@ -1,0 +1,141 @@
+Used dataset: Reuters
+Topic 1: 
+
+1. arrived
+2. dixons
+3. cyclops
+4. cyacq
+5. opec
+6. subroto
+7. barrels
+8. refineries
+9. mineral
+10. texaco
+C_Umass score:-474.655
+
+Topic 2: 
+
+1. schillings
+2. mortgages
+3. unadjusted
+4. norcros
+5. jobless
+6. revises
+7. downwards
+8. durable
+9. westminster
+10. ibm
+C_Umass score:-383.216
+
+Topic 3: 
+
+1. maize
+2. crop
+3. corn
+4. wheat
+5. sugar
+6. palm
+7. thai
+8. drought
+9. sown
+10. tanzania
+C_Umass score:-525.099
+
+Topic 4: 
+
+1. governor
+2. slack
+3. slower
+4. currencies
+5. wang
+6. ems
+7. helping
+8. keating
+9. basket
+10. bundesbank
+C_Umass score:-470.259
+
+Topic 5: 
+
+1. barriers
+2. asian
+3. cranes
+4. vessels
+5. spotlight
+6. chipmakers
+7. microchip
+8. semiconductors
+9. chips
+10. miti
+C_Umass score:-416.064
+
+Topic 6: 
+
+1. questioned
+2. lyng
+3. sure
+4. thing
+5. pretty
+6. always
+7. fail
+8. mulroney
+9. settled
+10. speaking
+C_Umass score:-414.033
+
+Topic 7: 
+
+1. revs
+2. oper
+3. mths
+4. carryforwards
+5. avg
+6. shrs
+7. carryforward
+8. minorities
+9. shr
+10. excludes
+C_Umass score:-345.424
+
+Topic 8: 
+
+1. ethylene
+2. multi
+3. cathay
+4. swire
+5. murray
+6. amr
+7. carbide
+8. hongkong
+9. shanghai
+10. automotive
+C_Umass score:-304.042
+
+Topic 9: 
+
+1. proration
+2. tendered
+3. acquire
+4. definitive
+5. cyl
+6. expiration
+7. citicorp
+8. affiliates
+9. terminate
+10. peabody
+C_Umass score:-489.206
+
+Topic 10: 
+
+1. qtly
+2. prev
+3. qtrly
+4. declares
+5. payout
+6. campbell
+7. foothill
+8. cruz
+9. humana
+10. microwave
+C_Umass score:-376.044
+

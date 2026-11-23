@@ -1,0 +1,701 @@
+Used dataset: Reuters
+Topic 1: 
+
+1. parallel
+2. sarney
+3. equatorial
+4. sudan
+5. hawkeye
+6. conable
+7. imf
+8. default
+9. gros
+10. lusinchi
+C_Umass score:-231.154
+
+Topic 2: 
+
+1. dixons
+2. cyacq
+3. gencorp
+4. pcc
+5. lbo
+6. unsolicited
+7. emery
+8. wagner
+9. conrac
+10. sosnoff
+C_Umass score:-380.643
+
+Topic 3: 
+
+1. warner
+2. borg
+3. gaf
+4. heyman
+5. dow
+6. alcoa
+7. carbide
+8. chemical
+9. ual
+10. alcan
+C_Umass score:-298.455
+
+Topic 4: 
+
+1. edelman
+2. cathay
+3. swire
+4. evergo
+5. bil
+6. hkg
+7. dome
+8. jardine
+9. matheson
+10. encor
+C_Umass score:-260.312
+
+Topic 5: 
+
+1. earthquake
+2. saudis
+3. nazer
+4. lukman
+5. alvite
+6. quake
+7. opec
+8. ecuador
+9. iea
+10. bpd
+C_Umass score:-313.255
+
+Topic 6: 
+
+1. amo
+2. chrysler
+3. amc
+4. renault
+5. motors
+6. ford
+7. personal
+8. murray
+9. chartered
+10. expenditures
+C_Umass score:-383.500
+
+Topic 7: 
+
+1. crushers
+2. rbd
+3. arrival
+4. bread
+5. rebate
+6. rebates
+7. soviets
+8. israel
+9. cargoes
+10. ussr
+C_Umass score:-367.567
+
+Topic 8: 
+
+1. anacomp
+2. sprint
+3. accrual
+4. datagraphix
+5. healthcare
+6. earned
+7. earnings
+8. offs
+9. hilton
+10. buyback
+C_Umass score:-336.392
+
+Topic 9: 
+
+1. sama
+2. koehler
+3. repurchases
+4. allocation
+5. arrange
+6. liquidity
+7. advances
+8. funds
+9. adds
+10. dinar
+C_Umass score:-343.502
+
+Topic 10: 
+
+1. ferc
+2. transco
+3. cubic
+4. becor
+5. metres
+6. trillion
+7. kaneb
+8. propane
+9. discovered
+10. discoveries
+C_Umass score:-285.338
+
+Topic 11: 
+
+1. eia
+2. distillate
+3. johnson
+4. seger
+5. borrowings
+6. acceptances
+7. fed
+8. balances
+9. window
+10. reserve
+C_Umass score:-417.601
+
+Topic 12: 
+
+1. ico
+2. delegate
+3. delegates
+4. ibc
+5. jorio
+6. dauster
+7. buffer
+8. icco
+9. uganda
+10. principles
+C_Umass score:-357.129
+
+Topic 13: 
+
+1. celanese
+2. greyhound
+3. trailways
+4. viacom
+5. amusements
+6. redstone
+7. honeywell
+8. hughes
+9. allegheny
+10. bull
+C_Umass score:-284.259
+
+Topic 14: 
+
+1. bbl
+2. mobil
+3. api
+4. sour
+5. wti
+6. drilled
+7. postings
+8. sweet
+9. lasmo
+10. lichtblau
+C_Umass score:-336.611
+
+Topic 15: 
+
+1. bhp
+2. ncr
+3. usx
+4. retailers
+5. ibm
+6. steel
+7. inventories
+8. cbi
+9. ethylene
+10. plants
+C_Umass score:-348.782
+
+Topic 16: 
+
+1. fats
+2. andriessen
+3. oils
+4. portuguese
+5. wendy
+6. treaty
+7. portugal
+8. express
+9. vegetable
+10. cereals
+C_Umass score:-362.352
+
+Topic 17: 
+
+1. chipmakers
+2. microchip
+3. miti
+4. chip
+5. ldp
+6. microchips
+7. maekawa
+8. yasuhiro
+9. saito
+10. lipc
+C_Umass score:-294.121
+
+Topic 18: 
+
+1. heller
+2. miyazawa
+3. sumita
+4. mulford
+5. louvre
+6. intervened
+7. kiichi
+8. stoltenberg
+9. satoshi
+10. stabilize
+C_Umass score:-380.994
+
+Topic 19: 
+
+1. audi
+2. basf
+3. guilders
+4. schillings
+5. incoming
+6. crowns
+7. dieter
+8. unilever
+9. francs
+10. schmidt
+C_Umass score:-315.856
+
+Topic 20: 
+
+1. peking
+2. yuan
+3. switched
+4. tea
+5. ccc
+6. poultry
+7. cattle
+8. semolina
+9. pakistan
+10. guarantees
+C_Umass score:-411.140
+
+Topic 21: 
+
+1. platforms
+2. tehran
+3. aqazadeh
+4. warships
+5. weinberger
+6. silkworm
+7. missile
+8. gcc
+9. missiles
+10. turkish
+C_Umass score:-244.843
+
+Topic 22: 
+
+1. pdvsa
+2. champlin
+3. copper
+4. allis
+5. chalmers
+6. boliden
+7. smelting
+8. newmont
+9. magma
+10. zccm
+C_Umass score:-345.226
+
+Topic 23: 
+
+1. ounces
+2. ounce
+3. assays
+4. platinum
+5. silver
+6. norton
+7. quest
+8. gold
+9. rand
+10. coins
+C_Umass score:-354.080
+
+Topic 24: 
+
+1. mortgages
+2. norstar
+3. suburban
+4. komatsu
+5. fortune
+6. colonial
+7. maryland
+8. sanwa
+9. crossland
+10. mellon
+C_Umass score:-295.681
+
+Topic 25: 
+
+1. sprinkel
+2. taxation
+3. wilson
+4. reform
+5. reforms
+6. evans
+7. abdul
+8. essential
+9. correction
+10. economics
+C_Umass score:-401.081
+
+Topic 26: 
+
+1. fitzwater
+2. herrington
+3. pioneer
+4. yulo
+5. saturated
+6. monier
+7. redland
+8. etl
+9. csr
+10. delhi
+C_Umass score:-258.705
+
+Topic 27: 
+
+1. berlin
+2. bonn
+3. lira
+4. otto
+5. balladur
+6. edouard
+7. karl
+8. schlesinger
+9. ems
+10. german
+C_Umass score:-330.857
+
+Topic 28: 
+
+1. mpt
+2. wireless
+3. cpc
+4. klm
+5. ferruzzi
+6. mannesmann
+7. ariadne
+8. barwon
+9. saatchi
+10. astra
+C_Umass score:-256.117
+
+Topic 29: 
+
+1. cpi
+2. durable
+3. incomes
+4. index
+5. jobless
+6. clothing
+7. permits
+8. living
+9. statistical
+10. unadjusted
+C_Umass score:-345.110
+
+Topic 30: 
+
+1. armtek
+2. triangle
+3. stations
+4. kaiser
+5. publications
+6. crazy
+7. eddie
+8. microwave
+9. software
+10. allwaste
+C_Umass score:-306.304
+
+Topic 31: 
+
+1. gdp
+2. institutes
+3. diw
+4. recession
+5. gnp
+6. expansionary
+7. oecd
+8. sluggish
+9. gross
+10. slowing
+C_Umass score:-325.939
+
+Topic 32: 
+
+1. usair
+2. twa
+3. taft
+4. leigh
+5. pemberton
+6. takeovers
+7. appeal
+8. injunction
+9. icc
+10. narragansett
+C_Umass score:-295.572
+
+Topic 33: 
+
+1. sown
+2. temporao
+3. harvesting
+4. plantings
+5. bushels
+6. stcks
+7. temperatures
+8. harvested
+9. pod
+10. hectares
+C_Umass score:-283.818
+
+Topic 34: 
+
+1. widened
+2. baht
+3. dinars
+4. narrowed
+5. surplus
+6. roubles
+7. deficit
+8. account
+9. corresponding
+10. productivity
+C_Umass score:-396.306
+
+Topic 35: 
+
+1. norcros
+2. debit
+3. band
+4. minorities
+5. stg
+6. williams
+7. outright
+8. cra
+9. attributable
+10. england
+C_Umass score:-370.416
+
+Topic 36: 
+
+1. auctions
+2. kwacha
+3. brokers
+4. broker
+5. auction
+6. benson
+7. instruments
+8. kleinwort
+9. sumitomo
+10. stearns
+C_Umass score:-393.215
+
+Topic 37: 
+
+1. pillsbury
+2. renouf
+3. tmoc
+4. olson
+5. galveston
+6. universal
+7. cooper
+8. debentures
+9. underwriters
+10. santos
+C_Umass score:-340.083
+
+Topic 38: 
+
+1. lyng
+2. gao
+3. certs
+4. glickman
+5. signup
+6. administrator
+7. haggard
+8. rep
+9. ascs
+10. missouri
+C_Umass score:-293.069
+
+Topic 39: 
+
+1. diluted
+2. shrs
+3. avg
+4. jan
+5. restated
+6. mths
+7. shr
+8. feb
+9. qtr
+10. revs
+C_Umass score:-475.605
+
+Topic 40: 
+
+1. fomc
+2. psbr
+3. lawson
+4. nigel
+5. sterling
+6. poll
+7. election
+8. weighted
+9. chancellor
+10. jones
+C_Umass score:-319.306
+
+Topic 41: 
+
+1. mulroney
+2. bentsen
+3. urgent
+4. gatt
+5. clercq
+6. denman
+7. yeutter
+8. barriers
+9. shultz
+10. comecon
+C_Umass score:-307.568
+
+Topic 42: 
+
+1. qtrly
+2. qtly
+3. payout
+4. franklin
+5. mthly
+6. quarterly
+7. declares
+8. div
+9. payable
+10. hikes
+C_Umass score:-397.677
+
+Topic 43: 
+
+1. comdata
+2. gabelli
+3. digiorgio
+4. pincus
+5. symbion
+6. champion
+7. bilzerian
+8. lindner
+9. jacobs
+10. snyder
+C_Umass score:-214.329
+
+Topic 44: 
+
+1. giorgio
+2. metex
+3. exercisable
+4. carling
+5. royex
+6. datacard
+7. instinet
+8. revlon
+9. corona
+10. par
+C_Umass score:-193.476
+
+Topic 45: 
+
+1. aegon
+2. thyssen
+3. engine
+4. excellent
+5. jaguar
+6. amr
+7. profitability
+8. cleveland
+9. car
+10. optimism
+C_Umass score:-300.069
+
+Topic 46: 
+
+1. panic
+2. analyst
+3. bullish
+4. upham
+5. rally
+6. analysts
+7. attention
+8. barney
+9. got
+10. picking
+C_Umass score:-417.111
+
+Topic 47: 
+
+1. aloha
+2. linotype
+3. employs
+4. caterpillar
+5. gould
+6. fairchild
+7. fujitsu
+8. schlumberger
+9. hawley
+10. princeville
+C_Umass score:-291.790
+
+Topic 48: 
+
+1. harcourt
+2. brace
+3. maxwell
+4. jovanovich
+5. hbj
+6. expd
+7. usdaprj
+8. prev
+9. harper
+10. mar
+C_Umass score:-288.601
+
+Topic 49: 
+
+1. seamen
+2. seaway
+3. explosion
+4. marines
+5. locals
+6. fnv
+7. employers
+8. miners
+9. redundancies
+10. elevator
+C_Umass score:-303.780
+
+Topic 50: 
+
+1. oper
+2. carryforwards
+3. carryforward
+4. excludes
+5. loss
+6. discontinued
+7. includes
+8. exclude
+9. writedowns
+10. profit
+C_Umass score:-379.381
+
